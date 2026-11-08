@@ -2157,7 +2157,7 @@ function renderGiochi(box, api, startId) {
 /* ====================== STATISTICHE ======================
    GoatCounter: gratuito, senza cookie, nessun dato personale, niente banner.
    Per accenderle basta scrivere qui il nome dell'account (es. "ilvuoto" per ilvuoto.goatcounter.com). */
-const GOATCOUNTER = "";
+const GOATCOUNTER = "ilvuoto-stanza";
 function track(name){ try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({path: name, title: name, event: true}); } catch(e){} }
 if (GOATCOUNTER && !window.claude && /^https?:$/.test(location.protocol) && !/^(localhost|127\.)/.test(location.hostname)){
   window.goatcounter = {no_onload: false};
