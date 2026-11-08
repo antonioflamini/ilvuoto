@@ -20,6 +20,7 @@ for line in head.split("\n"):
         continue
     keep.append(line)
 head = "\n".join(keep)
+head = head.replace("<title>", '<meta name="claude:viewport-fit-sides" content="cover">\n<title>', 1)
 body = re.sub(r'\s*<a class="buy" href="en/"[^>]*>English</a>', "", body)
 
 os.makedirs(OUT, exist_ok=True)
