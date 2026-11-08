@@ -1,7 +1,7 @@
 /* La Stanza offline: pagina, testi e codice si aggiornano dalla rete quando c'è, altrimenti si usa l'ultima copia salvata.
    Quando si cambia questo file, alzare il numero della cache. */
-const CACHE = "ilvuoto-v5";
-const CORE = ["./", "stile.css", "testi.js", "app.js", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
+const CACHE = "ilvuoto-v6";
+const CORE = ["./", "stile.css", "testi.js", "app.js", "en/", "en/testi.js", "en/app.js", "en/manifest.webmanifest", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
@@ -17,10 +17,12 @@ self.addEventListener("fetch", e => {
   const fresh = req.mode === "navigate" || /\/$|\.(html|js|css|json|webmanifest)$/.test(url.pathname);
   if (fresh) {
     // prima la rete, senza la cache del browser, così gli aggiornamenti arrivano subito; senza rete, la copia
-    const key = req.mode === "navigate" ? new URL("./", location.href).href : url.origin + url.pathname;
+    // ogni lingua ha la sua copia: /ilvuoto/ e /ilvuoto/en/ non si sovrascrivono
+    const key = req.mode === "navigate" ? url.origin + url.pathname.replace(/index\.html$/, "") : url.origin + url.pathname;
+    const home = new URL(/\/en\//.test(url.pathname) ? "en/" : "./", location.href).href;
     e.respondWith(fetch(url.href, {cache: "no-cache", credentials: "same-origin"})
       .then(r => { if (r.ok) { const c = r.clone(); caches.open(CACHE).then(k => k.put(key, c)); } return r; })
-      .catch(() => caches.match(key).then(hit => hit || caches.match(new URL("./", location.href).href))));
+      .catch(() => caches.match(key).then(hit => hit || caches.match(home))));
     return;
   }
   // immagini, suoni e font: prima la copia, poi la rete

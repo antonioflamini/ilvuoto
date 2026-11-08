@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<title>IL VUOTO · The Room</title>
+<meta name="description" content="A voice made from Antonio Flamini's books Il Vuoto (The Void). It says little, asks questions and leaves space. The Silence Test, a question a day, small games about emptiness.">
+<link rel="canonical" href="https://antonioflamini.github.io/ilvuoto/en/">
+<link rel="alternate" hreflang="it" href="https://antonioflamini.github.io/ilvuoto/">
+<link rel="alternate" hreflang="en" href="https://antonioflamini.github.io/ilvuoto/en/">
+<link rel="alternate" hreflang="x-default" href="https://antonioflamini.github.io/ilvuoto/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="it_IT">
+<meta property="og:site_name" content="IL VUOTO">
+<meta property="og:title" content="IL VUOTO · The Room">
+<meta property="og:description" content="A voice made from Antonio Flamini's books. It says little, asks questions and leaves space.">
+<meta property="og:url" content="https://antonioflamini.github.io/ilvuoto/en/">
+<meta property="og:image" content="https://antonioflamini.github.io/ilvuoto/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The book IL VUOTO by Antonio Flamini on a wooden table, next to the title La Stanza (The Room)">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f6f6f4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../icon.svg" type="image/svg+xml">
+<link rel="icon" href="../icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Il Vuoto">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "IL VUOTO · The Room", "url": "https://antonioflamini.github.io/ilvuoto/en/", "applicationCategory": "LifestyleApplication", "operatingSystem": "Web, Android, iOS", "inLanguage": "en", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "A voice made from Antonio Flamini's IL VUOTO books: a question a day, the Silence Test, small games about emptiness.", "author": {"@type": "Person", "name": "Antonio Flamini", "sameAs": ["https://www.instagram.com/antonio_flamini/", "https://www.amazon.com/author/antonioflamini"]}}, {"@type": "Book", "name": "Il Vuoto", "alternateName": "The Void", "bookFormat": "https://schema.org/Paperback", "inLanguage": "it", "numberOfPages": 150, "author": {"@type": "Person", "name": "Antonio Flamini"}, "url": "https://www.amazon.com/dp/B0H2P38RJP", "isPartOf": {"@type": "BookSeries", "name": "IL VUOTO"}}]}</script>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<link rel="preload" href="../fonts/jost-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../stile.css">
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Il Vuoto</div>
+      <div class="sub">An analysis of the space between thoughts</div>
+    </div>
+    <div class="hdr-acts"><button type="button" class="buy" id="app-open" hidden>Install the app</button><button type="button" class="buy" id="info-open" aria-haspopup="dialog" aria-controls="info">What is the Room</button><a class="buy" id="buy" href="https://www.amazon.com/dp/B0H2P38RJP" target="_blank" rel="noopener" data-sheet="libro">The book</a><a class="buy" href="../" hreflang="it" lang="it">Italiano</a></div>
+  </header>
+
+  <nav class="rooms" role="tablist" aria-label="Rooms">
+    <button class="room-tab" role="tab" id="tab-stanza" data-room="stanza" aria-selected="true" aria-controls="room-stanza" tabindex="0">The Room</button>
+    <button class="room-tab" role="tab" id="tab-test" data-room="test" aria-selected="false" aria-controls="room-test" tabindex="-1">The Test</button>
+    <button class="room-tab" role="tab" id="tab-oggi" data-room="oggi" aria-selected="false" aria-controls="room-oggi" tabindex="-1">Today</button>
+    <button class="room-tab" role="tab" id="tab-cancella" data-room="cancella" aria-selected="false" aria-controls="room-cancella" tabindex="-1">Erase</button>
+    <button class="room-tab" role="tab" id="tab-giochi" data-room="giochi" aria-selected="false" aria-controls="room-giochi" tabindex="-1">Games</button>
+    <button class="room-tab" role="tab" id="tab-passa" data-room="passa" aria-selected="false" aria-controls="room-passa" tabindex="-1">Pass</button>
+  </nav>
+
+  <!-- ROOM -->
+  <section class="room" id="room-stanza" role="tabpanel" tabindex="-1" aria-labelledby="tab-stanza">
+    <div class="presence" data-state="idle">
+      <canvas id="presence" aria-hidden="true"></canvas>
+      <div class="presence-meta">
+        <div class="top"><span class="who">The Room</span><span class="counter" id="pcounter"></span></div>
+        <div class="bottom"><span class="mood" id="mood">breathes</span><span class="tools"><button type="button" class="link" id="voce" aria-pressed="true">Voice: on</button><button type="button" class="link" id="presentati">Introduce yourself</button><button type="button" class="link" id="info-open2" aria-controls="info">What is it</button></span></div>
+      </div>
+    </div>
+    <nav class="vols" aria-label="Choose the volume">
+      <button class="vol" id="v-I" data-v="I" aria-pressed="true"><b>I</b> The Void</button>
+      <button class="vol" id="v-II" data-v="II" aria-pressed="false"><b>II</b> The Structure <small>coming soon</small></button>
+      <button class="vol" id="v-III" data-v="III" aria-pressed="false"><b>III</b> The Threshold <small>2027</small></button>
+    </nav>
+    <div class="state" id="state"></div>
+    <div class="log" id="log"></div>
+    <div class="sr" id="say" role="status" aria-live="polite"></div>
+    <form class="ask" id="ask" autocomplete="off">
+      <label for="msg" class="sr">Write a thought</label>
+      <textarea id="msg" rows="1" maxlength="600" placeholder="Write a thought. Or don't."></textarea>
+      <div class="row">
+        <span class="counter" id="counter">Silence: 0.00%</span>
+        <div class="acts">
+          <button type="button" class="btn ghost" id="taci" title="Leave an empty space">Hush</button>
+          <button type="button" class="btn ghost" id="stanza" title="Get a working room">Room</button>
+          <button type="submit" class="btn primary" id="send">Leave</button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- TEST -->
+  <section class="room" id="room-test" role="tabpanel" tabindex="-1" aria-labelledby="tab-test" hidden>
+    <div class="stage" id="test"></div>
+  </section>
+
+  <!-- TODAY -->
+  <section class="room" id="room-oggi" role="tabpanel" tabindex="-1" aria-labelledby="tab-oggi" hidden>
+    <div class="stage" id="oggi"></div>
+  </section>
+
+  <!-- ERASE -->
+  <section class="room" id="room-cancella" role="tabpanel" tabindex="-1" aria-labelledby="tab-cancella" hidden>
+    <div class="stage" id="cancella"></div>
+  </section>
+
+  <!-- GAMES -->
+  <section class="room" id="room-giochi" role="tabpanel" tabindex="-1" aria-labelledby="tab-giochi" hidden>
+    <div class="stage" id="giochi"></div>
+  </section>
+
+  <!-- PASS -->
+  <section class="room" id="room-passa" role="tabpanel" tabindex="-1" aria-labelledby="tab-passa" hidden>
+    <div class="stage" id="passa"></div>
+  </section>
+
+  <footer>
+    <span>This voice is a program inspired by Antonio Flamini's books; inside Claude an artificial intelligence may answer. It isn't the author and it isn't a therapist. The page doesn't save conversations; with the live voice, the text goes to Claude.</span>
+    <div class="links">
+      <a href="https://www.amazon.com/dp/B0H2P38RJP" target="_blank" rel="noopener">Volume I on Amazon</a>
+      <button type="button" class="link" data-sheet="ce_lho" style="font-size:12px">Already have the book? Two lines on Amazon</button>
+      <a href="https://www.amazon.com/author/antonioflamini" target="_blank" rel="noopener">Author page</a>
+      <a href="https://www.instagram.com/antonio_flamini/" target="_blank" rel="noopener">Instagram</a>
+      <button type="button" class="link" id="home-open" style="font-size:12px">Install the app, free</button>
+      <span>#ilvuoto</span>
+    </div>
+  </footer>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<div class="info" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title" hidden><div class="info-in" id="sheet-in"></div></div>
+<div class="info" id="info" role="dialog" aria-modal="true" aria-labelledby="info-title" hidden>
+  <div class="info-in">
+    <div class="row"><span class="eyebrow">Instructions, a few</span><button type="button" class="btn ghost" id="info-close">Close</button></div>
+    <h2 class="huge" id="info-title">What is the Room</h2>
+    <p class="big">A voice made from Antonio Flamini's books Il Vuoto (The Void). It says little, asks questions and leaves space. The books are in Italian and almost entirely blank; this page is in English.</p>
+    <dl class="info-list">
+      <dt>The Room</dt><dd>Choose the volume, write a thought and press Leave. Hush leaves an empty space, Room gives you a small exercise.</dd>
+      <dt>The counter</dt><dd>The silence rises in Volumes I and II and falls in III. Every answer can be copied or saved as an image.</dd>
+      <dt>The Test</dt><dd>Five questions, one of seven archetypes, your "page N of 150", images to share.</dd>
+      <dt>Today</dt><dd>One question a day, the same for everyone. Your note stays only on your device. You can pass the question on to someone, without your answer.</dd>
+      <dt>Erase</dt><dd>Write a sentence: the page erases it letter by letter and leaves the longest word.</dd>
+      <dt>Games</dt><dd>Small one-minute games about emptiness, with a result to share.</dd>
+      <dt>Pass</dt><dd>Ready-made lines to send to one person, with the link.</dd>
+      <dt>Every day</dt><dd>Install it on your phone: it's free, no app store or account needed, and it works offline too. The "Install the app" button is at the top and at the bottom of the page. In the Today room you can also get a reminder of the question every evening, from your phone's calendar.</dd>
+      <dt>The presence</dt><dd>An ink membrane that breathes, listens, goes quiet and speaks. With the voice on, it reads the answers aloud.</dd>
+      <dt>Two ways to answer</dt><dd>Live voice: inside Claude, what you write is sent to Claude's AI, with your account, to prepare the answer. Fragment voice: answers written in advance, everything stays on the page. It always works.</dd>
+    </dl>
+    <h3 class="info-h">What it doesn't do</h3>
+    <p class="sub info-no">It doesn't save conversations: close the page and they're gone. Only your preferences, your last Test and your Today notes stay on your device.<br>It isn't Antonio and it isn't a therapist.<br>It doesn't give you the whole book: it quotes only short lines, the rest is on Amazon.<br>If you're thinking of hurting yourself: call your local emergency number (911 US, 999 UK, 112 EU), or find a helpline at <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a>.</p>
+    <div class="acts"><button type="button" class="btn primary" id="info-go">Enter the Room</button><a class="btn ghost" href="https://www.amazon.com/dp/B0H2P38RJP" target="_blank" rel="noopener">Volume I on Amazon</a></div>
+  </div>
+</div>
+
+<script src="testi.js"></script>
+<script src="app.js"></script>
+
+</body></html>
