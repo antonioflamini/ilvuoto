@@ -331,7 +331,12 @@ function isCrisi(t){   // prima di cercare: apostrofi al posto degli accenti (pi
   return CRISI.test(s) || CRISI.test(String(t)) || /\b(voglio|vorrei|devo) buttarmi|\bmi (voglio|vorrei) buttare\b|\bnon voglio (più |piu )?vivere\b|\bmi taglio\b(?! (i capelli|la barba|le unghie))|\bmi sparo\b|\b(voglio|vorrei) scomparire\b|\bnon voglio più svegliarmi\b/i.test(s);
 }
 function norm(s){ return " " + s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g," ") + " "; }
-let lastTema = null, depth = 0, lastEx = "";
+let lastTema = null, depth = 0, lastEx = "", memTema = null;
+const STOP_IT = new Set("perche quando sempre ancora questo questa quello quella questi quelle niente nessuno qualcosa qualcuno davvero allora proprio troppo tutto tutti tutte molto adesso perché però come dove anche oppure mentre sento sentito fatto fare essere avere stato stata dopo prima poco altro altra altri cosa cose volta volte credo penso voglio vorrei posso potrei dovrei sarebbe sono siamo".split(" "));
+function parolaPesante(text){
+  const ws = (String(text).toLowerCase().match(/\p{L}{6,}/gu) || []).filter(w => !STOP_IT.has(w.normalize("NFD").replace(/[\u0300-\u036f]/g,"")));
+  return ws.sort((a,b)=>b.length-a.length)[0] || "";
+}
 const CRISI_SEGUITO = ["Sono ancora qui. Ma una persona vera conta più di queste pagine: in emergenza il 112, oppure Telefono Amico Italia allo 02 2327 2327.",
   "Non devi spiegarmi niente. Se puoi, chiama adesso qualcuno di cui ti fidi, o Telefono Amico Italia allo 02 2327 2327. In emergenza, il 112."];
 const GENERIC_Q = ["Resta lì un momento. Cosa c'è sotto?","E adesso, cosa resta?","Puoi dirlo con meno parole?","Di chi è questa frase, davvero?","Cosa toglieresti, per primo?","Se lo dicessi ad alta voce, come suonerebbe?","Chi te l'ha insegnato?","E se non ci fosse niente da fare?","Che cosa c'era prima di questo pensiero?","Da quanto tempo lo porti con te?"];
@@ -361,11 +366,18 @@ function fragmentReply(text){
   }
   if (turnCount % 7 === 0 && (!temi.length || temi[0]==="incerto")) return pick(VUOTI);
   const tema = temi[0] || null; const def = tema ? TEMI[tema] : null;
+  // memoria: se cambia argomento, a volte la Stanza ricorda di cosa parlavi prima
+  const prevTema = memTema; if (tema && TEMI_NOMI[tema]) memTema = tema;
+  const ricordo = (tema && prevTema && prevTema !== tema && TEMI_NOMI[tema] && TEMI_NOMI[prevTema] && Math.random() < 0.4)
+    ? pick(RICORDO).replace("{a}", TEMI_NOMI[prevTema]).replace("{b}", TEMI_NOMI[tema]) + "\n\n" : "";
+  // eco: senza un tema riconosciuto, a volte restituisce la parola più pesante del messaggio
+  if (!tema && words >= 3 && Math.random() < 0.45){ const w = parolaPesante(text); if (w){ lastTema = null; depth = 0; return pick(ECO).replace("{w}", w) + " " + (take(GENERIC_Q) || pick(GENERIC_Q)); } }
   lastTema = tema; depth = 0;
   const q = (def && take(def.q)) || take(GENERIC_Q) || pick(GENERIC_Q);
   const bridge = def ? take(def.r, def.w>1) : "";
   const tail = (bridge ? bridge + " " : "") + q;
   if (def && def.solo) return tail;
+  if (ricordo) return ricordo + tail;
   const pools = vol === "III" ? [VOLUMI.III.frammenti] : [VOLUMI[vol].frammenti, VOLUMI.II.frammenti, VOLUMI.I.frammenti];
   let frag = null;
   if (tema) for (const pool of pools){ const c = pool.filter(f=>f[1].split(" ").includes(tema) && !used.has(f[0])); if (c.length){ frag = pick(c); break; } }
@@ -416,7 +428,7 @@ async function respond(text){
 }
 function setBusy(b){ $("#send").disabled=b; $("#taci").disabled=b; $("#stanza").disabled=b; }
 function openVolume(v, opening){
-  convGen++; rush = false; vol = v; turns = []; used = new Set(); turnCount = 0; lastTema = null; depth = 0; document.querySelector(".presence").classList.remove("compact"); if (ctl) ctl.abort(); typeGen++; VOICE.stop();
+  convGen++; rush = false; vol = v; turns = []; used = new Set(); turnCount = 0; lastTema = null; depth = 0; memTema = null; document.querySelector(".presence").classList.remove("compact"); if (ctl) ctl.abort(); typeGen++; VOICE.stop();
   document.querySelectorAll(".vol").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===v)));
   log.replaceChildren(); setSilence(VOLUMI[v].silenzioIniziale); setMode();
   addLine("voice", opening || VOLUMI[v].apertura, {share:true});
@@ -547,14 +559,13 @@ function renderOggi(){
   const q = list[qi].q;
   // giorni consecutivi (solo su questo dispositivo)
   let st = store.get("giorni", null); if (!st || typeof st!=="object" || !Number.isFinite(st.tot)) st = {last:null, run:0, tot:0};
-  try { for (let k=0;k<localStorage.length;k++){ const key=localStorage.key(k); const m=key && key.match(/^ilvuoto-nota-(-?\d+)$/); if (m && +m[1] < di-30) localStorage.removeItem(key); } } catch(e){}
   const today = new Date(); const dateTxt = today.toLocaleDateString("it-IT",{weekday:"long", day:"numeric", month:"long"});
   const n = (di % 150 + 150) % 150, perc = n * STEP;
-  const note = el("textarea",{class:"note",id:"oggi-note",rows:"2",placeholder:"Rispondi qui. Resta su questo dispositivo; finisce nell'immagine solo se la salvi tu.",maxlength:"400"});
-  note.value = store.get("nota-"+di, "");
+  const note = el("textarea",{class:"note",id:"oggi-note",rows:"2",placeholder:"Rispondi qui. Diventa una pagina del tuo Vuoto e resta solo su questo telefono.",maxlength:"400"});
+  note.value = (QUADERNO.get()[di] || {}).a || store.get("nota-"+di, "");
   const help = el("p",{class:"voice alert",style:"white-space:pre-line;font-size:16px;margin:0",hidden:""}, CRISI_TESTO);
-  note.oninput = ()=>{ store.set("nota-"+di, note.value); if (isCrisi(note.value)){ noSell = true; help.hidden = false; } };
-  const mark = ()=>{ if (st.last !== di){ st = {last:di, run: st.last===di-1 ? st.run+1 : 1, tot: st.tot+1}; store.set("giorni", st); const ok = store.get("giorni", null); renderOggi(); toast(ok && ok.last===di ? "Segnato. Torna domani." : "Fatto. Questo browser non conserva i giorni, quindi il conto non resta."); } };
+  note.oninput = ()=>{ QUADERNO.write(di, q, note.value); if (isCrisi(note.value)){ noSell = true; help.hidden = false; } };
+  const mark = ()=>{ if (st.last !== di){ QUADERNO.write(di, q, note.value); st = {last:di, run: st.last===di-1 ? st.run+1 : 1, tot: st.tot+1}; store.set("giorni", st); track("oggi-risposto-" + di); const ok = store.get("giorni", null); renderOggi(); toast(ok && ok.last===di ? "Segnato. Torna domani." : "Fatto. Questo browser non conserva i giorni, quindi il conto non resta."); } };
   box.append(
     el("div",{class:"eyebrow"}, dateTxt + " · la domanda di oggi"),
     el("h2",{class:"big"}, q),
@@ -574,9 +585,167 @@ function renderOggi(){
       el("div",{}, el("b",{}, String(st.last===di||st.last===di-1 ? st.run : 0)), el("small",{},"giorni di fila")),
       el("div",{}, el("b",{}, String(st.tot)), el("small",{},"giorni in tutto")),
       el("div",{}, el("b",{}, pct(perc)+"%"), el("small",{},"silenzio di oggi"))),
+    othersLine(di, st.last===di),
+    quadernoBlock(),
     ...(typeof oggiSellLine==="function" && [7,30].includes(st.tot) ? [oggiSellLine(st.tot)].filter(Boolean) : []),
     el("p",{class:"sub"},"Una domanda al giorno, uguale per tutti. Domani ne arriva un'altra.")
   );
+}
+
+/* ====================== SUONO DEL SILENZIO ======================
+   Un rumore di stanza (4'33'') o di pioggia (il bicchiere), generato dal browser: nessun file da scaricare. */
+const AMBIENT = {
+  ctx: null, node: null, gain: null, on: store.get("suono", true),
+  noise(kind){
+    const c = this.ctx, len = c.sampleRate * 4, buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < len; i++){ const w = Math.random()*2-1;
+      if (kind === "stanza"){ last = (last + 0.02*w) / 1.02; d[i] = last * 3.2; }      // rumore "marrone": il fondo di una stanza
+      else { d[i] = w * (Math.random() < 0.0009 ? 1 : 0.32); } }                        // pioggia: fruscio con qualche goccia
+    const src = c.createBufferSource(); src.buffer = buf; src.loop = true;
+    const f = c.createBiquadFilter();
+    if (kind === "stanza"){ f.type = "lowpass"; f.frequency.value = 420; } else { f.type = "bandpass"; f.frequency.value = 1600; f.Q.value = 0.5; }
+    src.connect(f); return {src, out: f};
+  },
+  start(kind){
+    if (!this.on || REDUCED_SOUND()) return;
+    try {
+      this.stop(true);
+      this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === "suspended") this.ctx.resume();
+      const {src, out} = this.noise(kind), g = this.ctx.createGain(), t = this.ctx.currentTime;
+      g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(kind === "stanza" ? 0.22 : 0.12, t + 2.5);
+      out.connect(g); g.connect(this.ctx.destination); src.start(); this.node = src; this.gain = g;
+    } catch(e){}
+  },
+  stop(now){
+    const n = this.node, g = this.gain; this.node = this.gain = null; if (!n) return;
+    try { const t = this.ctx.currentTime; g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t); g.gain.linearRampToValueAtTime(0, t + (now ? 0.05 : 1.2)); n.stop(t + (now ? 0.06 : 1.3)); } catch(e){}
+  },
+  toggle(){ this.on = !this.on; store.set("suono", this.on); if (!this.on) this.stop(); }
+};
+function REDUCED_SOUND(){ return false; }
+function soundToggle(){
+  const b = el("button",{type:"button",class:"link","aria-pressed":String(AMBIENT.on)});
+  const draw = ()=>{ b.textContent = "Suono: " + (AMBIENT.on ? "acceso" : "spento"); b.setAttribute("aria-pressed", String(AMBIENT.on)); };
+  b.onclick = ()=>{ AMBIENT.toggle(); draw(); }; draw(); return el("div",{class:"tools"}, b);
+}
+addEventListener("visibilitychange", ()=>{ if (document.hidden) AMBIENT.stop(true); });
+
+/* ====================== IL TUO VUOTO: il libro che scrivi tu, una risposta al giorno ======================
+   Ogni risposta alla domanda di Oggi è una pagina: pagina 1 = silenzio 0%, pagina 150 = 100%, come nel Volume I.
+   Tutto resta sul telefono (localStorage); si può salvare una copia e stampare il proprio volume in PDF. */
+const QUADERNO = {
+  key: "quaderno",
+  get(){ let o = store.get(this.key, null); if (!o || typeof o !== "object"){ o = this.migrate(); } return o; },
+  migrate(){   // le vecchie note di Oggi diventano le prime pagine
+    const o = {}, list = COPY.domande_del_giorno;
+    try { for (let k=0;k<localStorage.length;k++){ const key=localStorage.key(k); const m=key && key.match(/^ilvuoto-nota-(-?\d+)$/);
+      if (m){ const d=+m[1]; let a=""; try { a = JSON.parse(localStorage.getItem(key)) || ""; } catch(e){} if (String(a).trim()) o[d] = {q: list[((d%list.length)+list.length)%list.length].q, a: String(a)}; } } } catch(e){}
+    store.set(this.key, o); return o;
+  },
+  write(di, q, a){ const o = this.get(); a = String(a||""); if (a.trim()) o[di] = {q, a}; else delete o[di]; store.set(this.key, o); },
+  pages(){ const o = this.get(); return Object.keys(o).map(Number).sort((x,y)=>x-y).map(d=>({d, ...o[d]})); },
+  name(){ return store.get("quaderno-nome", ""); }
+};
+function dateOf(di){ return new Date(Date.UTC(2026,0,1) + di*86400000); }
+function dateTxtOf(di, opts={day:"numeric", month:"long", year:"numeric"}){ return dateOf(di).toLocaleDateString("it-IT", {timeZone:"UTC", ...opts}); }
+function silOfPage(n){ return Math.min(100, (n-1) * STEP); }   // pagina 1 → 0%, pagina 150 → 100%
+
+function quadernoGrid(pages){
+  const g = el("div",{class:"q-grid",role:"img","aria-label":`${Math.min(pages.length,150)} pagine scritte su 150`});
+  for (let i=1;i<=150;i++) g.append(el("i",{class: i<=pages.length ? "on" : ""}));
+  return g;
+}
+function quadernoBlock(){
+  const pages = QUADERNO.pages(), n = pages.length, done = n >= 150;
+  return el("div",{class:"q-block"},
+    el("div",{class:"row"}, el("span",{class:"eyebrow"},"Il tuo Vuoto"), el("span",{class:"counter"}, n ? `pagina ${Math.min(n,150)} di 150 · ${fmt(silOfPage(Math.min(n,150)))}` : "pagina 0 di 150")),
+    el("p",{class:"g-how"}, done ? "Hai scritto il tuo volume: 150 pagine. Adesso puoi stamparlo, o regalarlo."
+      : n ? "Ogni risposta è una pagina. A 150 il tuo volume è finito: il silenzio arriva al 100%, come nel libro."
+          : "Ogni risposta di Oggi diventa una pagina di un libro tuo. Pagina 1 al silenzio 0%, pagina 150 al 100%. Poi lo stampi."),
+    quadernoGrid(pages),
+    el("div",{class:"tools"},
+      el("button",{type:"button",class:"link",onclick:openQuaderno}, n ? "Sfoglia le tue pagine" : "Come funziona"),
+      ...(n ? [el("button",{type:"button",class:"link",onclick:printQuaderno},"Stampa il tuo volume (PDF)")] : [])));
+}
+/* quante persone hanno risposto oggi (GoatCounter, contatore pubblico): solo un numero, nessuna risposta */
+function othersLine(di, answered){
+  const p = el("p",{class:"sub",hidden:""});
+  if (typeof GOATCOUNTER === "string" && GOATCOUNTER && !window.claude && /^https?:$/.test(location.protocol) && !/^(localhost|127\.)/.test(location.hostname)){
+    fetch(`https://${GOATCOUNTER}.goatcounter.com/counter/${encodeURIComponent("oggi-risposto-" + di)}.json`).then(r=>r.ok ? r.json() : null).then(j=>{
+      const c = j && parseInt(String(j.count).replace(/\D/g,""), 10);
+      if (c >= 3){ p.textContent = answered ? `Oggi hai risposto insieme ad altre ${(c-1).toLocaleString("it-IT")} persone. Nessuno sa cosa.` : `Oggi hanno risposto ${c.toLocaleString("it-IT")} persone. Nessuno sa cosa.`; p.hidden = false; }
+    }).catch(()=>{});
+  }
+  return p;
+}
+function openQuaderno(){
+  sheetReturn = document.activeElement; VOICE.stop();
+  const box = $("#sheet-in"); box.replaceChildren();
+  const pages = QUADERNO.pages(), n = pages.length;
+  const nameIn = el("input",{class:"note",type:"text",maxlength:"40",placeholder:"Il tuo nome, per la copertina (facoltativo)","aria-label":"Il tuo nome per la copertina"});
+  nameIn.value = QUADERNO.name(); nameIn.oninput = ()=>store.set("quaderno-nome", nameIn.value.trim());
+  const list = el("div",{class:"pass"});
+  pages.slice().reverse().forEach((pg, i)=>{ const num = n - i;
+    list.append(el("div",{class:"q-page"},
+      el("div",{class:"eyebrow"}, `Pagina ${num} · ${dateTxtOf(pg.d)} · ${fmt(silOfPage(Math.min(num,150)))}`),
+      el("p",{class:"sub"}, pg.q), el("p",{class:"q-a"}, pg.a))); });
+  const fileIn = el("input",{type:"file",accept:"application/json,.json",hidden:""});
+  fileIn.onchange = async ()=>{ const f = fileIn.files && fileIn.files[0]; if (!f) return;
+    try { const j = JSON.parse(await f.text()); const o = j && j.pagine; if (!o || typeof o !== "object") throw 0;
+      const cur = QUADERNO.get(); let added = 0; for (const [d, v] of Object.entries(o)){ if (v && typeof v.a === "string" && typeof v.q === "string" && /^-?\d+$/.test(d)){ if (!cur[d]) added++; cur[d] = {q: v.q.slice(0,400), a: v.a.slice(0,400)}; } }
+      store.set(QUADERNO.key, cur); if (j.nome && !QUADERNO.name()) store.set("quaderno-nome", String(j.nome).slice(0,40));
+      toast(added ? `Ripristinate ${added} pagine.` : "Nessuna pagina nuova da ripristinare."); openQuaderno(); renderOggi(); }
+    catch(e){ toast("Questo file non è una copia del Vuoto."); } };
+  box.append(
+    el("div",{class:"row"}, el("span",{class:"eyebrow"},"Il tuo Vuoto · " + (n ? `${Math.min(n,150)} pagine su 150` : "ancora bianco")), el("button",{type:"button",class:"btn ghost",onclick:closeSheet},"Chiudi")),
+    el("h2",{class:"huge",id:"sheet-title"}, n >= 150 ? "Il tuo volume è finito." : "Il libro che scrivi tu."),
+    el("p",{class:"big"}, "Ogni giorno, nella stanza Oggi, rispondi a una domanda. Ogni risposta è una pagina. Alla pagina 150 il silenzio è al 100% e il volume è finito."),
+    quadernoGrid(pages),
+    el("p",{class:"sub"}, "Le pagine restano solo su questo telefono: nessuno le legge, nemmeno Antonio. Se cambi telefono o cancelli i dati del browser spariscono, quindi ogni tanto salvane una copia."),
+    nameIn,
+    el("div",{class:"acts"},
+      ...(n ? [el("button",{type:"button",class:"btn primary",onclick:printQuaderno},"Stampa il tuo volume (PDF)")] : [el("button",{type:"button",class:"btn primary",onclick:()=>{ closeSheet(); goRoom("oggi"); setTimeout(()=>{ const t=$("#oggi-note"); if (t) t.focus(); }, 50); }},"Scrivi la prima pagina")]),
+      ...(n ? [el("button",{type:"button",class:"btn ghost",onclick:backupQuaderno},"Salva una copia")] : []),
+      el("button",{type:"button",class:"btn ghost",onclick:()=>fileIn.click()},"Ripristina una copia"), fileIn),
+    ...(n ? [el("div",{class:"eyebrow"},"Le tue pagine"), list] : []),
+    el("p",{class:"g-libro"}, "Il Volume I di Antonio Flamini fa la stessa cosa al contrario: 150 pagine quasi bianche, scritte da lui, con il silenzio che sale. ", sellLink("Il Volume I su Amazon","amazon","quaderno")));
+  const d = $("#sheet"); d.hidden = false; d.scrollTop = 0; d.querySelector(".btn.ghost").focus();
+  track("quaderno-aperto");
+}
+function backupQuaderno(){
+  const data = {app:"il-vuoto", versione:1, salvato: new Date().toISOString(), nome: QUADERNO.name(), pagine: QUADERNO.get()};
+  const blob = new Blob([JSON.stringify(data, null, 1)], {type:"application/json"}), file = `il-mio-vuoto-${new Date().toISOString().slice(0,10)}.json`;
+  try { const f = new File([blob], file, {type:"application/json"});
+    if (CAN_SHARE && navigator.canShare && navigator.canShare({files:[f]})){ navigator.share({files:[f], title:"Il mio Vuoto"}).catch(()=>{}); return; } } catch(e){}
+  const a = el("a",{href:URL.createObjectURL(blob), download:file}); document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 3000);
+  toast("Copia salvata. Tienila al sicuro: serve per ripristinare le pagine.");
+}
+/* il volume stampabile: 150 pagine A5, quelle non scritte restano bianche con il solo contatore, come nel libro */
+function printQuaderno(){
+  const pages = QUADERNO.pages().slice(0,150), nome = QUADERNO.name();
+  let host = $("#stampa"); if (host) host.remove();
+  host = el("div",{id:"stampa","aria-hidden":"true"});
+  const pg = (cls, ...kids)=> el("section",{class:"p " + cls}, ...kids);
+  host.append(pg("cover", el("div",{class:"p-brand"},"IL VUOTO"), el("div",{class:"p-sub"},"Analisi dello spazio tra i pensieri"),
+    el("div",{class:"p-title"}, nome ? `Il Vuoto di ${nome}` : "Il mio Vuoto"),
+    el("div",{class:"p-small"}, pages.length ? `${pages.length} pagine scritte · ${dateTxtOf(pages[0].d)} – ${dateTxtOf(pages[pages.length-1].d)}` : ""),
+    el("div",{class:"p-foot"},"Con le domande della Stanza, dai libri di Antonio Flamini")));
+  for (let i=1;i<=150;i++){
+    const x = pages[i-1];
+    host.append(pg(x ? "full" : "blank",
+      ...(x ? [el("div",{class:"p-date"}, dateTxtOf(x.d)), el("div",{class:"p-q"}, x.q), el("div",{class:"p-a"}, x.a)] : []),
+      el("div",{class:"p-meter"}, fmt(silOfPage(i))), el("div",{class:"p-num"}, String(i))));
+  }
+  host.append(pg("end", el("div",{class:"p-a"},"Fine."), el("div",{class:"p-q"},"Le pagine bianche le hai lasciate tu. Anche questa è una risposta."),
+    el("div",{class:"p-foot"},"IL VUOTO · Volume I di Antonio Flamini, su Amazon · #ilvuoto")));
+  document.body.appendChild(host);
+  track("quaderno-stampa");
+  const done = ()=>{ setTimeout(()=>{ const h=$("#stampa"); if (h) h.remove(); }, 500); removeEventListener("afterprint", done); };
+  addEventListener("afterprint", done);
+  toast("Scegli «Salva come PDF» nella finestra di stampa.");
+  setTimeout(()=>{ try { window.print(); } catch(e){ toast("Su questo dispositivo la stampa non è disponibile."); } }, 300);
 }
 
 /* ====================== CANCELLA ====================== */
@@ -712,6 +881,27 @@ function gameSellLine(id, vol){
 
 /* i fogli: Il libro, Da regalare, Ce l'ho già, Volume II */
 let sheetReturn = null;
+/* ====================== UNA PAGINA DEL LIBRO, UNA STANZA ======================
+   Chi ha il Volume I sceglie una pagina (1-150) e riceve un esercizio da scriverci sopra.
+   Sempre lo stesso per la stessa pagina, per tutti: così due lettori possono confrontarsi. */
+function paginaEsercizio(n){
+  const pool = [...(STANZE.I||[]), ...(STANZE.II||[])];
+  return pool.length ? pool[(n * 37 + 11) % pool.length] : "Scrivi una frase sola. Poi lascia bianco il resto.";
+}
+function paginaBlock(start){
+  const inp = el("input",{type:"number",min:"1",max:"150",inputmode:"numeric",class:"note",style:"max-width:7em","aria-label":"Numero di pagina, da 1 a 150"});
+  inp.value = String(start || store.get("ce_pagina", 73));
+  const out = el("div",{class:"g-quote"}), meter = el("p",{class:"eyebrow"});
+  const draw = ()=>{ const n = Math.max(1, Math.min(150, parseInt(inp.value,10) || 1)); store.set("ce_pagina", n);
+    meter.textContent = `Pagina ${n} · ${fmt(silOfPage(n))}`;
+    out.replaceChildren(el("p",{}, paginaEsercizio(n)), el("cite",{},"Scrivilo a penna su quella pagina. Il libro lo finisce chi lo legge.")); };
+  inp.oninput = draw; draw();
+  return el("div",{class:"g-stage"}, el("label",{class:"eyebrow"},"Apri il Volume I a una pagina qualsiasi. Che numero è?"), inp, meter, out,
+    el("div",{class:"acts"},
+      el("button",{type:"button",class:"btn ghost",onclick:()=>{ const n = parseInt(inp.value,10)||1; shareLink(`Pagina ${n} del Vuoto: «${paginaEsercizio(n)}»\nE la tua pagina? ${PAGE_URL}#pagina\n#ilvuoto`, out); track("pagina-esercizio"); }}, SHARE_LBL),
+      el("button",{type:"button",class:"btn ghost",onclick:()=>{ const n = parseInt(inp.value,10)||1; saveCard({format:"story", eyebrow:`Pagina ${n} del Vuoto · ${fmt(silOfPage(n))}`, main:paginaEsercizio(n), sub:"Scritto a penna, sul libro.", meter:fmt(silOfPage(n))}, "il-vuoto-pagina"); }},"Storia")));
+}
+
 function openSheet(kind){
   sheetReturn = document.activeElement; VOICE.stop();
   const box = $("#sheet-in"); box.replaceChildren();
@@ -744,11 +934,18 @@ function openSheet(kind){
     const cap = ()=> C.foto.didascalia.replace("{n}", Math.max(1,Math.min(150, parseInt(n.value)||1)));
     n.oninput = ()=> store.set("ce_pagina", n.value);
     box.append(head(C.eyebrow), el("h2",{class:"huge",id:"sheet-title"}, C.titolo), el("p",{class:"big"}, C.intro),
+      el("h3",{class:"info-h"},"Una pagina, una stanza"), paginaBlock(),
       el("h3",{class:"info-h"},"Una recensione"), el("p",{}, C.recensione.testo), el("div",{class:"acts"}, sellBtn(C.recensione.bottone.testo,"recensione")),
       el("h3",{class:"info-h"},"Una foto"), el("p",{}, C.foto.testo),
       el("label",{for:"ce-pagina",class:"eyebrow"}, C.foto.campo_pagina.etichetta), n,
       el("div",{class:"acts"}, el("button",{type:"button",class:"btn ghost",onclick:()=>copyText(cap(), box)}, C.foto.bottoni[0].testo), sellBtn(C.foto.bottoni[1].testo,"instagram")),
       el("div",{class:"tools"}, el("button",{type:"button",class:"link",onclick:()=>{ store.set("ha_volume_I", false); closeSheet(); toast("Va bene. Quando vuoi, il libro è qui."); }}, C.annulla)));
+  }
+  if (kind === "pagina"){
+    box.append(head("Per chi ha il Volume I"), el("h2",{class:"huge",id:"sheet-title"},"Una pagina, una stanza."),
+      el("p",{class:"big"},"Ogni pagina del libro ha il suo esercizio. Uguale per tutti: se un amico apre la stessa pagina, scrive la stessa cosa a modo suo."),
+      paginaBlock(),
+      el("div",{class:"tools"}, sellLink("Non ce l'ho ancora: il Volume I su Amazon","amazon","pagina")));
   }
   if (kind === "vol2"){
     const V = S.vol2;
@@ -842,7 +1039,7 @@ function renderGiochi(box, api, startId) {
     return el("p", { class: "g-libro" }, frase + " ", el("a", { class: "link", href, target: "_blank", rel: "noopener" }, testo));
   }
 
-  function stop() { if (stopCurrent) { try { stopCurrent(); } catch (e) {} stopCurrent = null; } P("set", "idle"); }
+  function stop() { if (stopCurrent) { try { stopCurrent(); } catch (e) {} stopCurrent = null; } AMBIENT.stop(true); P("set", "idle"); }
 
   function record(id, res) {
     const all = api.store.get("giochi", {}) || {};
@@ -1034,7 +1231,7 @@ function renderGiochi(box, api, startId) {
     const pesa = el("p", { class: "counter" }, "Pesa: 250 g · ti sembra: 250 g");
     const voce = el("p", { class: "g-line", "aria-live": "polite" }, "Il bicchiere è sul tavolo.");
     const hold = el("button", { class: "btn primary g-hold", type: "button", "aria-label": "Tieni premuto per tenere il bicchiere" }, "Tieni premuto");
-    stage.append(el("div",{class:"g-glassrow"}, svg, hold), tempo, pesa, voce);
+    stage.append(el("div",{class:"g-glassrow"}, svg, hold), tempo, pesa, voce, soundToggle());
 
     let holding = false, t0 = 0, raf = 0, done = false, faseI = -1, lastM = 0;
     const lift = (f, now) => {
@@ -1060,12 +1257,12 @@ function renderGiochi(box, api, startId) {
       if (e && e.pointerId != null) { try { hold.setPointerCapture(e.pointerId); } catch (x) {} }
       holding = true; t0 = performance.now(); faseI = -1;
       hold.textContent = "Lo stai tenendo"; hold.classList.add("g-on");
-      P("set", "listen");
+      P("set", "listen"); AMBIENT.start("pioggia");
       raf = requestAnimationFrame(tick);
     }
     function release(forzato) {
       if (!holding || done) return;
-      holding = false; cancelAnimationFrame(raf);
+      holding = false; cancelAnimationFrame(raf); AMBIENT.stop();
       const t = (performance.now() - t0) / 1000;
       lift(0, 0);
       hold.classList.remove("g-on");
@@ -1109,7 +1306,7 @@ function renderGiochi(box, api, startId) {
       stage.append(q);
       const b0 = q.querySelector(".btn"); if (b0) b0.focus({ preventScroll: true });
     }
-    return () => { done = true; holding = false; cancelAnimationFrame(raf); removeEventListener("blur", onBlur); };
+    return () => { done = true; holding = false; cancelAnimationFrame(raf); removeEventListener("blur", onBlur); AMBIENT.stop(true); };
   }
 
   /* ======================= 3. TOGLI ======================= */
@@ -1213,7 +1410,7 @@ function renderGiochi(box, api, startId) {
     const voce = el("p", { class: "g-line", "aria-live": "polite" }, "Quando sei pronto. Poi niente.");
     const go = el("button", { class: "btn primary", type: "button" }, "Comincia");
     const basta = el("button", { class: "link g-stop", type: "button", hidden: "" }, "Basta così");
-    stage.append(big, counter, voce, el("div", { class: "acts" }, go), basta);
+    stage.append(big, counter, voce, el("div", { class: "acts" }, go), basta, soundToggle());
     const frasi = ["Hai toccato. Si ricomincia.", "Anche il mouse fa rumore.", "Da capo, come tutti.", "Cage era più paziente.", "Il silenzio non ti ha chiesto niente.", "Quasi. Quasi non conta."];
     let t0 = 0, raf = 0, armedAt = 0, running = false, stops = 0, done = false, px = null, py = null, best = 0;
     const fmt = s => "00:" + String(Math.floor(s)).padStart(2, "0");
@@ -1230,7 +1427,7 @@ function renderGiochi(box, api, startId) {
       running = true; t0 = performance.now(); armedAt = t0 + 700; px = py = null;
       go.parentNode.hidden = true;
       voce.textContent = stops ? voce.textContent : "Adesso niente.";
-      P("set", "hush"); P("hush");
+      P("set", "hush"); P("hush"); AMBIENT.start("stanza");
       raf = requestAnimationFrame(tick);
     }
     function interrupt(kind) {
@@ -1274,7 +1471,7 @@ function renderGiochi(box, api, startId) {
     function finish(arreso) {
       if (done) return;
       const s = Math.min(GOAL, Math.max(best, (performance.now() - t0) / 1000));
-      done = true; running = false; cancelAnimationFrame(raf); unbind();
+      done = true; running = false; cancelAnimationFrame(raf); unbind(); AMBIENT.stop();
       P("set", "idle");
       const pc = arreso ? s / GOAL * 100 : 100, secs = Math.floor(s);
       fine(g, stage, arreso ? {
@@ -1294,7 +1491,7 @@ function renderGiochi(box, api, startId) {
         share: "Sono rimasto fermo 33 secondi senza toccare niente" + (stops ? ", al " + (stops + 1) + "° tentativo." : ", al primo tentativo.")
       });
     }
-    return () => { done = true; running = false; cancelAnimationFrame(raf); unbind(); };
+    return () => { done = true; running = false; cancelAnimationFrame(raf); unbind(); AMBIENT.stop(true); };
   }
 
   const MOTORI = { pezzo, bicchiere, togli, cage };
@@ -1465,6 +1662,8 @@ function route(H, first){
   if (H==="info"){ setTimeout(openInfo, 300); H=""; }
   if (H==="home"){ setTimeout(openHomeSheet, 300); H=""; }
   if (H==="libro"){ setTimeout(()=>openSheet("libro"), 300); H=""; }
+  if (H==="pagina"){ setTimeout(()=>openSheet("pagina"), 300); H=""; }
+  if (H==="vuoto-mio"){ setTimeout(()=>openQuaderno(), 300); H="oggi"; }
   if (/^gioco[1-4]$/.test(H)){ gameStart = H; H = "giochi"; }
   const qm = H.match(/^q(\d{1,3})$/); if (qm && COPY.domande_del_giorno[+qm[1]]){ passed = +qm[1]; H = "oggi"; }
   let v = store.get("vol","I"); if (!VOLUMI[v]) v = "I";

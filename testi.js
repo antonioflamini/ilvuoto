@@ -248,6 +248,36 @@ const TEMI = {
   relazioni:{k:["amic","un'amic","l'amic","dell'amic","rapport","relazion","conoscent","le persone","la gente","falsi"],
     r:["Con alcune persone si sta interi, con altre si diventa una versione ridotta.","Non tutti quelli vicini ti vogliono vero; alcuni ti vogliono comodo.","La distanza giusta da una persona non è sempre la più corta."],
     q:["Con chi ti senti una versione ridotta di te?","Chi ti resta vicino anche nei giorni storti?","Quale distanza ti farebbe bene, con questa persona?"]},
+  tempo:{k:["non ho tempo","tempo per me","poco tempo","fretta","di corsa","sempre di corsa","agenda","impegni","scadenz","corro ","correre","rincorr","troppe cose"],
+    r:["Quando non c'è mai tempo, di solito non è il tempo che manca: è lo spazio tra una cosa e l'altra.","Correre sempre dà l'impressione di essere importanti. Ma anche la fretta è un modo di riempire il vuoto.","Un'agenda piena non dice chi sei. Dice solo quanto poco hai lasciato bianco."],
+    q:["Se domani avessi un'ora libera, la difenderesti o la riempiresti subito?","Quale impegno di questa settimana non hai mai scelto davvero?","Di cosa avresti paura, se ti fermassi?"]},
+  soldi:{k:["soldi","denaro","debit","mutuo","stipendi","pagare","bollett","spese","economic","arrivare a fine mese","fine mese","risparmi"],
+    r:["I conti fanno rumore anche quando sono in ordine, figurarsi quando non lo sono.","Preoccuparsi per i soldi è stancante, perché è un pensiero che non stacca mai.","Quello che costa davvero, a volte, non è nel conto in banca."],
+    q:["Cosa ti preoccupa di più: la cifra, o quello che pensi dica di te?","C'è una spesa che fai solo per sentirti meglio?","Se il problema dei soldi sparisse domani, cosa resterebbe?"]},
+  casa:{k:["casa mia","a casa","in casa","la casa","trasloc","coinquilin","appartament","tornare a casa","casa nuova"],
+    r:["Una casa non è piena per quante cose contiene, ma per quanto ci respiri.","A volte la stanza più ingombra è quella dove non entri mai.","Traslocare costringe a scegliere cosa portare. Anche dentro."],
+    q:["Qual è il posto di casa dove stai meglio, e perché proprio lì?","Cosa c'è in casa tua che tieni solo per non doverlo buttare?","In casa ti senti ospite o padrone di casa?"]},
+  figli:{k:["figli","mio figlio","mia figlia","bambin","i ragazzi","essere madre","essere padre","fare la mamma","fare il papa","maternit","paternit","genitore"],
+    r:["Ai figli si dà tutto, ed è facile sparire dietro a quel tutto.","I figli imparano più da come stai che da quello che dici.","Essere sempre disponibile per loro non vuol dire non avere più un posto tuo."],
+    q:["Chi sei, quando non stai facendo il genitore?","Cosa vorresti che i tuoi figli imparassero dal tuo silenzio, più che dalle tue parole?","Quando è stata l'ultima volta che qualcuno si è preso cura di te?"]},
+  futuro:{k:["futuro","domani","il prossimo anno","cosa faro","che faro","andra a finire","prospettiv","progett","incert sul futuro","non so cosa fare della"],
+    r:["Il futuro fa paura soprattutto quando lo riempiamo in anticipo di scenari.","Non serve vedere tutta la strada. Basta il prossimo passo.","Pianificare tutto è un modo elegante di non stare nel presente."],
+    q:["Qual è la prossima cosa piccola, una sola, che puoi fare?","Se il futuro andasse bene, da cosa te ne accorgeresti per primo?","Quanto del futuro che temi è già successo, in realtà, solo nella tua testa?"]},
+  noia:{k:["noia","annoi","mi annoio","niente da fare","non so cosa fare","vuoto dentro","apatia","apatic"],
+    r:["La noia non è un guasto. Spesso è il primo spazio libero da molto tempo.","Prima di riempirla subito, prova a guardare cosa c'è sotto la noia.","Annoiarsi è scomodo, ma è lì che a volte arrivano le idee."],
+    q:["Cosa succede se resti nella noia ancora cinque minuti, senza telefono?","La noia ti dà fastidio, o ti fa un po' paura?","Che cosa la riempie di solito, e funziona davvero?"]},
+  corpo:{k:["il mio corpo","mal di testa","mal di schiena","malattia","malato","malata","dolore fisico","peso forma","dieta","allo specchio","non mi piaccio"],
+    r:["Il corpo spesso dice prima quello che la testa non vuole ancora ascoltare.","Guardarsi allo specchio con gli occhi degli altri è un peso in più.","A volte la stanchezza del corpo è solo la parte visibile."],
+    q:["Cosa ti sta dicendo il corpo, se provi ad ascoltarlo senza giudicarlo?","Quando è stata l'ultima volta che ti sei trattato con gentilezza?","Di chi è lo sguardo che usi quando ti guardi allo specchio?"]},
+  telefono:{k:["telefon","cellular","smartphone","social","instagram","tiktok","notific","scroll","whatsapp","chat ","messaggi","online"],
+    r:["Il telefono riempie ogni secondo vuoto. Il problema è che ci toglie anche quelli che ci servivano.","Le notifiche sono come qualcuno che ti chiama per nome ogni minuto: alla fine non ti senti più.","Guardare la vita degli altri è comodo: non chiede di guardare la propria."],
+    q:["Quante volte, oggi, hai preso il telefono senza un motivo?","Cosa stavi evitando, l'ultima volta che hai aperto un social?","Cosa faresti nei primi dieci minuti di una giornata senza telefono?"]},
+  passato:{k:["passato","ricord","una volta","da piccolo","da piccola","infanzia","nostalgi","rimpiango","tornare indietro","com'era prima","quando ero"],
+    r:["Il passato non si cambia, ma si può smettere di portarselo dietro intero.","La nostalgia spesso ricorda meglio di com'era davvero.","Quello che eri non è sparito: è diventato il pavimento su cui stai."],
+    q:["Cosa del passato vorresti portare con te, e cosa potresti lasciare?","Se il te di dieci anni fa ti vedesse adesso, cosa noterebbe per primo?","Cosa ti manca davvero: quel periodo, o chi eri allora?"]},
+  cambiamento:{k:["cambiare","cambiament","cambiare vita","ricominciare","ripartire","voltare pagina","nuovo inizio","cambio lavoro","svolta"],
+    r:["Cambiare non comincia aggiungendo, ma togliendo qualcosa.","Si cambia raramente per una grande decisione. Di solito per tante piccole rinunce al vecchio.","Voltare pagina vuol dire anche accettare che quella pagina resti scritta."],
+    q:["Cosa dovresti smettere di fare, perché il cambiamento cominci?","Di cosa hai paura di perdere, se cambi davvero?","Se cambiassi solo una cosa questo mese, quale sarebbe?"]},
   parlare:{k:["parlarne","parlargli","parlarle","parlare con","telefonar","chiamarl","scriverle","scrivergli","non ci parliamo","non ci sentiamo","riallacci","tornare a parlare"],
     r:["A volte le parole giuste sono poche, e vanno dette a una persona sola.","Tornare a parlare non significa dire tutto.","Il silenzio tra due persone può essere una pausa o un muro."],
     q:["Qual è la prima frase che diresti?","Se potessi dirlo a una persona sola, a chi lo diresti?","Cosa ti trattiene dal farlo?"]},
@@ -288,6 +318,17 @@ const TEMI = {
     r:[],
     q:["Ciao. Sono la Stanza, una voce fatta con i libri di Antonio. Cosa ti porta qui?","Ciao. Qui non c'è fretta: scrivi quello che hai in testa, anche in disordine.","Ciao. Com'è andata oggi, davvero?"]}
 };
+
+/* Come la Stanza nomina un tema quando ricorda di cosa parlavi prima. */
+const TEMI_NOMI = {lutto:"di chi non c'è più", addio:"di un addio", lavoro:"di lavoro", tristezza:"di tristezza", stanchezza:"di stanchezza", sonno:"di notti senza sonno",
+  ansia:"di ansia", colpa:"di colpa", errore:"di un errore", paura:"di paura", solitudine:"di solitudine", rabbia:"di rabbia", conflitto:"di una discussione",
+  ferita:"di una ferita", attesa:"di un'attesa", dare:"di quanto dai", no:"di un no che non riesci a dire", funzione:"di sentirti usato", incastro:"di adattarti agli altri",
+  empatia:"di emozioni degli altri", peso:"di un peso", maschera:"di maschere", identita:"di chi sei", visto:"di non sentirti visto", verita:"di una verità",
+  spiegare:"di spiegarti", scelta:"di una scelta", lasciare:"di lasciare andare", amore:"d'amore", famiglia:"della tua famiglia", relazioni:"di qualcuno vicino a te",
+  tempo:"di tempo che manca", soldi:"di soldi", casa:"di casa", figli:"dei figli", futuro:"del futuro", noia:"di noia", corpo:"del tuo corpo", telefono:"del telefono",
+  passato:"del passato", cambiamento:"di cambiare"};
+const ECO = ["«{w}». Resta un momento su questa parola.", "Hai scritto «{w}». Di tutto il messaggio, è quella che pesa di più?", "«{w}»: se togli tutto il resto, rimane questa."];
+const RICORDO = ["Prima parlavi {a}, adesso {b}. Forse c'entrano.", "Prima {a}, adesso {b}. Due cose, o la stessa vista da due lati?"];
 
 const STANZE = {
   I:["Scrivi una cosa sola che hai smesso di fare per gli altri.\n\nPoi fermati. Non aggiungere altro.",

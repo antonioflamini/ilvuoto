@@ -257,3 +257,31 @@ footer .links{display:flex;gap:14px;flex-wrap:wrap}
 @keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 @keyframes dots{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
 @media (prefers-reduced-motion:reduce){.line{animation:none}.thinking p::after{animation:none;content:"..."}}
+
+/* ===== IL TUO VUOTO ===== */
+.q-block{display:flex;flex-direction:column;gap:12px;border-top:1px solid var(--faint);padding-top:18px}
+.q-block .g-how{margin:0;font-size:15px}
+.q-grid{display:grid;grid-template-columns:repeat(15,1fr);gap:3px;width:min(100%,420px)}
+.q-grid i{display:block;aspect-ratio:1;border:1px solid var(--faint);background:transparent}
+.q-grid i.on{background:var(--ink);border-color:var(--ink)}
+.q-page{display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--faint);padding:16px 0}
+.q-page p{margin:0}
+.q-a{font-size:18px;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+#stampa{display:none}
+@media print{
+  @page{size:A5;margin:0}
+  html,body{background:#fff!important;color:#151515!important}
+  body > *:not(#stampa){display:none!important}
+  #stampa{display:block}
+  #stampa .p{position:relative;width:148mm;height:209mm;box-sizing:border-box;padding:22mm 18mm;page-break-after:always;break-after:page;overflow:hidden;font-family:var(--f-display);color:#151515;background:#fff}
+  #stampa .p-brand{font-size:11pt;letter-spacing:.42em;font-weight:400}
+  #stampa .p-sub{font-size:9pt;color:#6d6d68;margin-top:2mm}
+  #stampa .p-title{font-size:26pt;font-weight:300;margin-top:55mm;line-height:1.15}
+  #stampa .p-small{font-size:9pt;color:#6d6d68;margin-top:5mm}
+  #stampa .p-foot{position:absolute;left:18mm;right:18mm;bottom:18mm;font-size:8.5pt;color:#6d6d68}
+  #stampa .p-date{font-family:var(--f-mono);font-size:8pt;color:#6d6d68}
+  #stampa .p-q{font-size:10pt;color:#6d6d68;margin-top:6mm;line-height:1.4}
+  #stampa .p-a{font-size:15pt;font-weight:300;line-height:1.45;margin-top:14mm;white-space:pre-wrap;overflow-wrap:anywhere}
+  #stampa .p-meter{position:absolute;left:18mm;bottom:14mm;font-family:var(--f-mono);font-size:8pt;color:#6d6d68}
+  #stampa .p-num{position:absolute;right:18mm;bottom:14mm;font-family:var(--f-mono);font-size:8pt;color:#6d6d68}
+}
