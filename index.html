@@ -8,10 +8,11 @@
 <meta property="og:title" content="IL VUOTO · La Stanza">
 <meta property="og:description" content="Una voce fatta con i libri di Antonio Flamini. Parla poco, fa domande e lascia spazio.">
 <meta property="og:url" content="https://antonioflamini.github.io/ilvuoto/">
-<meta property="og:image" content="https://antonioflamini.github.io/ilvuoto/og.png">
+<meta property="og:image" content="https://antonioflamini.github.io/ilvuoto/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="IL VUOTO · La Stanza — Analisi dello spazio tra i pensieri">
+<meta property="og:image:alt" content="Il libro IL VUOTO di Antonio Flamini su un tavolo di legno, accanto al titolo La Stanza">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f6f6f4" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f0f0f" media="(prefers-color-scheme: dark)">
@@ -181,6 +182,7 @@ button.buy{appearance:none;background:none;border:0;border-bottom:1px solid var(
 .sell-steps{margin:0;padding-left:1.3em;font-size:17px;display:flex;flex-direction:column;gap:6px}
 .sell-row{margin-top:2px}
 .info-no{font-size:15px;line-height:1.7;margin:0}
+.book-photo{display:block;width:100%;height:auto;aspect-ratio:900/807;object-fit:cover;border:1px solid var(--faint);margin:0}
 .perks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0;padding:0;list-style:none;font-family:var(--f-mono);font-size:12px;color:var(--mute)}
 .perks li::before{content:"· "}
 footer{padding-block:18px 26px;font-size:12px;color:var(--mute);display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--faint)}
@@ -842,6 +844,7 @@ async function copyText(text, host){
 const CAN_SHARE = !!navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent||"");
 /* sul telefono apre il pannello Condividi (WhatsApp, Telegram, Instagram...); altrove copia */
 async function shareLink(text, host){
+  track("condividi");
   if (CAN_SHARE){ try { await navigator.share({text}); return; } catch(e){ if (e && e.name === "AbortError") return; } }
   copyText(text, host);
 }
@@ -1471,7 +1474,7 @@ VOLUMI.II.stato = vol2Out() ? 'Disponibile. <a class="link" href="' + VENDITE.li
   : 'In uscita. Il vuoto smette di essere una liberazione e diventa una prova. <button type="button" class="link" data-sheet="vol2">Avvisami quando esce</button>';
 
 function sellLink(testo, azione, punto){
-  if (azione === "amazon") return el("a",{class:"link",href:buyUrl(punto),target:"_blank",rel:"noopener"},testo);
+  if (azione === "amazon") return el("a",{class:"link",href:buyUrl(punto),target:"_blank",rel:"noopener","data-punto":punto||"amazon"},testo);
   if (azione === "instagram") return el("a",{class:"link",href:igUrl(),target:"_blank",rel:"noopener"},testo);
   if (azione === "recensione") return el("a",{class:"link",href:reviewUrl(),target:"_blank",rel:"noopener"},testo);
   if (azione === "segui_amazon") return el("a",{class:"link",href:seguiUrl(),target:"_blank",rel:"noopener"},testo);
@@ -1536,7 +1539,9 @@ function openSheet(kind){
   const S = VENDITE;
   if (kind === "libro"){
     const L = S.scheda_libro;
-    box.append(head(L.eyebrow), el("h2",{class:"huge",id:"sheet-title"}, L.titolo), el("p",{class:"big"}, L.dentro),
+    box.append(head(L.eyebrow), el("h2",{class:"huge",id:"sheet-title"}, L.titolo),
+      el("img",{class:"book-photo",src:"libro.jpg",alt:"Il Volume I, IL VUOTO di Antonio Flamini: copertina bianca, appoggiato su un tavolo di legno",width:"900",height:"807",loading:"lazy",decoding:"async"}),
+      el("p",{class:"big"}, L.dentro),
       el("p",{class:"sell-quote"}, "«" + L.citazione + "»"),
       el("dl",{class:"info-list"}, el("dt",{},"Per chi è"), el("dd",{},L.per_chi), el("dt",{},"Per chi non è"), el("dd",{},L.per_chi_non)),
       el("p",{class:"big"}, L.ironia),
@@ -2149,6 +2154,23 @@ function renderGiochi(box, api, startId) {
 }
 
 
+/* ====================== STATISTICHE ======================
+   GoatCounter: gratuito, senza cookie, nessun dato personale, niente banner.
+   Per accenderle basta scrivere qui il nome dell'account (es. "ilvuoto" per ilvuoto.goatcounter.com). */
+const GOATCOUNTER = "";
+function track(name){ try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({path: name, title: name, event: true}); } catch(e){} }
+if (GOATCOUNTER && !window.claude && /^https?:$/.test(location.protocol) && !/^(localhost|127\.)/.test(location.hostname)){
+  window.goatcounter = {no_onload: false};
+  const gs = document.createElement("script"); gs.async = true; gs.src = "https://gc.zgo.at/count.js";
+  gs.dataset.goatcounter = "https://" + GOATCOUNTER + ".goatcounter.com/count"; document.head.appendChild(gs);
+  document.addEventListener("click", e=>{   // clic verso fuori: Amazon, Instagram, recensioni
+    const a = e.target.closest && e.target.closest("a[href]"); if (!a) return;
+    const h = a.getAttribute("href") || "";
+    if (/amazon\./.test(h)) track(/review/.test(h) ? "amazon-recensione" : /stores\/author|\/author\//.test(h) ? "amazon-autore" : "amazon-" + (a.dataset.punto || "link"));
+    else if (/instagram\.com/.test(h)) track("instagram");
+  }, true);
+}
+
 /* ====================== PROMEMORIA (calendario del telefono, gratis, nessun server) ====================== */
 function remindIcs(){
   const d = new Date(); d.setDate(d.getDate() + (d.getHours() >= 21 ? 1 : 0));
@@ -2160,7 +2182,7 @@ function remindIcs(){
     "SUMMARY:La domanda di oggi · IL VUOTO","DESCRIPTION:Una domanda al giorno\\, uguale per tutti. " + PAGE_URL + "#oggi","URL:" + PAGE_URL + "#oggi",
     "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:La domanda di oggi","TRIGGER:PT0M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
   try { const a = el("a",{href: URL.createObjectURL(new Blob([ics],{type:"text/calendar"})), download:"il-vuoto-ogni-sera.ics"}); document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 3000);
-    toast("Aprilo e aggiungilo al calendario: ogni sera alle 21:30."); }
+    toast("Aprilo e aggiungilo al calendario: ogni sera alle 21:30."); track("promemoria"); }
   catch(e){ toast("Il promemoria non si può creare da qui."); }
 }
 
@@ -2168,7 +2190,7 @@ function remindIcs(){
 let installEvt = null;
 function renderAppBtn(){ const b = $("#app-open"); if (b) b.hidden = IS_HOME_APP || !!window.claude || !(installEvt || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"")); }
 addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); installEvt = e; renderAppBtn(); });
-addEventListener("appinstalled", ()=>{ installEvt = null; renderAppBtn(); if (!$("#sheet").hidden) closeSheet(); toast("Fatto: la Stanza è tra le tue app."); });
+addEventListener("appinstalled", ()=>{ track("installata"); installEvt = null; renderAppBtn(); if (!$("#sheet").hidden) closeSheet(); toast("Fatto: la Stanza è tra le tue app."); });
 async function installApp(){
   if (installEvt){ const ev = installEvt; installEvt = null; try { await ev.prompt(); await ev.userChoice; } catch(e){} renderAppBtn(); return true; }
   return false;
@@ -2241,6 +2263,7 @@ function goRoom(r){
   counterEl.closest("form").hidden = r !== "stanza";
   if (r !== "stanza") VOICE.stop();
   store.set("room", r);
+  if (goRoom._last !== r){ goRoom._last = r; track("stanza-" + r); }
 }
 document.querySelectorAll(".room-tab").forEach(b=>b.onclick=()=>goRoom(b.dataset.room));
 { const nr = $("nav.rooms"), upd = ()=>nr.classList.toggle("end", nr.scrollLeft + nr.clientWidth >= nr.scrollWidth - 4); nr.addEventListener("scroll", upd, {passive:true}); addEventListener("resize", upd); upd(); }
