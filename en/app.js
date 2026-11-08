@@ -1,5 +1,5 @@
 const BUY = "https://www.amazon.com/dp/B0H2P38RJP";
-const PAGE_URL = (!window.claude && /^https?:/.test(location.href)) ? location.href.split("#")[0] : "https://antonioflamini.github.io/ilvuoto/en/";   // su un sito proprio (Netlify) si condivide il suo indirizzo
+const PAGE_URL = (!window.claude && /^https?:/.test(location.href)) ? location.href.split(/[?#]/)[0] : "https://antonioflamini.github.io/ilvuoto/en/";   // su un sito proprio (Netlify) si condivide il suo indirizzo
 const IS_HOME_APP = (()=>{ try { return matchMedia("(display-mode: standalone)").matches || navigator.standalone === true; } catch(e){ return false; } })();
 
 /* ============================================================
