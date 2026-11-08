@@ -22,7 +22,9 @@
 <meta name="apple-mobile-web-app-title" content="Il Vuoto">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "IL VUOTO · La Stanza", "url": "https://antonioflamini.github.io/ilvuoto/", "applicationCategory": "LifestyleApplication", "operatingSystem": "Web, Android, iOS", "inLanguage": "it", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "description": "Una voce fatta con i libri IL VUOTO di Antonio Flamini: una domanda al giorno, il Test del Silenzio, piccoli giochi sul vuoto.", "author": {"@type": "Person", "name": "Antonio Flamini", "sameAs": ["https://www.instagram.com/antonio_flamini/", "https://www.amazon.com/author/antonioflamini"]}}, {"@type": "Book", "name": "Il Vuoto", "bookFormat": "https://schema.org/Paperback", "inLanguage": "it", "numberOfPages": 150, "author": {"@type": "Person", "name": "Antonio Flamini"}, "url": "https://www.amazon.it/dp/B0H2P38RJP", "isPartOf": {"@type": "BookSeries", "name": "IL VUOTO"}}]}</script>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
@@ -53,7 +55,9 @@ header{display:flex;justify-content:space-between;align-items:flex-start;gap:12p
 .sub{color:var(--mute);font-size:13px;letter-spacing:.02em}
 .buy{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:1px;white-space:nowrap}
 
-nav.rooms{display:flex;flex-wrap:wrap;column-gap:clamp(12px,3.4vw,22px);row-gap:0;margin-top:22px;border-bottom:1px solid var(--faint);overflow-x:auto}
+nav.rooms{display:flex;flex-wrap:nowrap;column-gap:clamp(14px,3.4vw,22px);margin-top:22px;border-bottom:1px solid var(--faint);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+nav.rooms::-webkit-scrollbar{display:none}
+@media (max-width:560px){nav.rooms{-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent)}nav.rooms.end{-webkit-mask-image:none;mask-image:none}}
 .room-tab{appearance:none;background:none;border:0;border-bottom:1px solid transparent;margin-bottom:-1px;padding:8px 0 10px;font:inherit;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);cursor:pointer;white-space:nowrap}
 .room-tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
 .room-tab:hover{color:var(--ink)}
@@ -177,6 +181,8 @@ button.buy{appearance:none;background:none;border:0;border-bottom:1px solid var(
 .sell-steps{margin:0;padding-left:1.3em;font-size:17px;display:flex;flex-direction:column;gap:6px}
 .sell-row{margin-top:2px}
 .info-no{font-size:15px;line-height:1.7;margin:0}
+.perks{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0;padding:0;list-style:none;font-family:var(--f-mono);font-size:12px;color:var(--mute)}
+.perks li::before{content:"· "}
 footer{padding-block:18px 26px;font-size:12px;color:var(--mute);display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--faint)}
 footer a{color:inherit}
 footer .links{display:flex;gap:14px;flex-wrap:wrap}
@@ -284,7 +290,7 @@ footer .links{display:flex;gap:14px;flex-wrap:wrap}
       <div class="brand">Il Vuoto</div>
       <div class="sub">Analisi dello spazio tra i pensieri</div>
     </div>
-    <div class="hdr-acts"><button type="button" class="buy" id="info-open" aria-haspopup="dialog" aria-controls="info">Cos'è la Stanza</button><a class="buy" id="buy" href="https://www.amazon.it/dp/B0H2P38RJP" target="_blank" rel="noopener" data-sheet="libro">Il libro</a></div>
+    <div class="hdr-acts"><button type="button" class="buy" id="app-open" hidden>Installa l'app</button><button type="button" class="buy" id="info-open" aria-haspopup="dialog" aria-controls="info">Cos'è la Stanza</button><a class="buy" id="buy" href="https://www.amazon.it/dp/B0H2P38RJP" target="_blank" rel="noopener" data-sheet="libro">Il libro</a></div>
   </header>
 
   <nav class="rooms" role="tablist" aria-label="Stanze">
@@ -359,7 +365,7 @@ footer .links{display:flex;gap:14px;flex-wrap:wrap}
       <button type="button" class="link" data-sheet="ce_lho" style="font-size:12px">Hai già il libro? Due righe su Amazon</button>
       <a href="https://www.amazon.com/author/antonioflamini" target="_blank" rel="noopener">Pagina autore</a>
       <a href="https://www.instagram.com/antonio_flamini/" target="_blank" rel="noopener">Instagram</a>
-      <button type="button" class="link" id="home-open" style="font-size:12px">Mettila nella Home</button>
+      <button type="button" class="link" id="home-open" style="font-size:12px">Installa l'app, gratis</button>
       <span>#ilvuoto</span>
     </div>
   </footer>
@@ -379,7 +385,7 @@ footer .links{display:flex;gap:14px;flex-wrap:wrap}
       <dt>Cancella</dt><dd>Scrivi una frase: la pagina la cancella lettera per lettera e lascia la parola più lunga.</dd>
       <dt>Giochi</dt><dd>Piccoli giochi di un minuto sul vuoto, con un risultato da condividere.</dd>
       <dt>Passa</dt><dd>Frasi pronte da mandare a una persona, con il link.</dd>
-      <dt>Ogni giorno</dt><dd>Mettila nella schermata Home del telefono: la ritrovi con un tocco, come un'app. Il pulsante "Mettila nella Home" è in fondo alla pagina.</dd>
+      <dt>Ogni giorno</dt><dd>Installala sul telefono: è gratis, non serve nessuno store né un account, e funziona anche senza rete. Il pulsante "Installa l'app" è in alto e in fondo alla pagina. Nella stanza Oggi puoi anche farti ricordare la domanda ogni sera, dal calendario del telefono.</dd>
       <dt>La presenza</dt><dd>Una membrana d'inchiostro che respira, ascolta, tace e parla. Con la voce accesa legge le risposte.</dd>
       <dt>Due modi di rispondere</dt><dd>Voce viva: dentro Claude, quello che scrivi viene mandato all'IA di Claude, con il tuo account, per preparare la risposta. Voce a frammenti: risposte scritte prima, tutto resta nella pagina. Funziona sempre.</dd>
     </dl>
@@ -833,6 +839,13 @@ async function copyText(text, host){
   try { await navigator.clipboard.writeText(text); toast("Copiato"); }
   catch(e){ const old = host.querySelector(".copybox"); if (old) old.remove(); const ta = el("textarea",{class:"copybox",rows:"4",readonly:"","aria-label":"Testo da copiare"}); ta.value=text; host.appendChild(ta); ta.focus(); ta.select(); toast("Seleziona e copia"); }
 }
+const CAN_SHARE = !!navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent||"");
+/* sul telefono apre il pannello Condividi (WhatsApp, Telegram, Instagram...); altrove copia */
+async function shareLink(text, host){
+  if (CAN_SHARE){ try { await navigator.share({text}); return; } catch(e){ if (e && e.name === "AbortError") return; } }
+  copyText(text, host);
+}
+const SHARE_LBL = CAN_SHARE ? "Manda" : "Copia";
 function shareText(t){ return "«" + t.replace(/\s*\n+\s*/g," ").trim() + "»\n— La Stanza, dai libri IL VUOTO di Antonio Flamini · " + fmt(silenzio) + "\n#ilvuoto · " + PAGE_URL; }
 
 /* --- card per Instagram: post 1080×1350, storia 1080×1920 --- */
@@ -1117,7 +1130,7 @@ function addLine(kind, text, opts={}){
   done.then(()=>{ if (d.isConnected) d.scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block:"nearest"}); });
   if (kind === "voice" && opts.share) done.then(()=>{
     const t = el("div",{class:"tools"});
-    t.append(el("button",{type:"button",class:"link",onclick:()=>copyText(shareText(p.textContent), d)},"Copia"),
+    t.append(el("button",{type:"button",class:"link",onclick:()=>shareLink(shareText(p.textContent), d)},SHARE_LBL),
              el("button",{type:"button",class:"link",onclick:()=>saveCard({format:"post", main:p.textContent, firma:"La Stanza · dai libri di Antonio Flamini"}, "il-vuoto")},"Post"),
              el("button",{type:"button",class:"link",onclick:()=>saveCard({format:"story", main:p.textContent, firma:"La Stanza · dai libri di Antonio Flamini"}, "il-vuoto")},"Storia"));
     d.appendChild(t);
@@ -1190,7 +1203,7 @@ async function liveReply(text){
 }
 function setMode(){ stateEl.innerHTML = VOLUMI[vol].stato + (liveOK ? " · voce viva" : " · voce a frammenti"); }
 async function respond(text){
-  if (busy) return; busy = true; setBusy(true); const gen = convGen;
+  if (busy) return; stopIntro(); busy = true; setBusy(true); const gen = convGen;
   try {
     rush = false; addLine("you", text); document.querySelector(".presence").classList.add("compact");
     if (isCrisi(text)){ noSell = true; lastTema = "__crisi"; depth = 0; await addLine("voice", CRISI_TESTO, {cls:"alert", instant:true}).done; VOICE.say(CRISI_TESTO.replace("02 2327 2327","zero due, ventitré ventisette, ventitré ventisette")); return; }
@@ -1227,14 +1240,19 @@ $("#ask").addEventListener("submit", e=>{ e.preventDefault(); if (busy){ toast("
 msg.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); $("#ask").requestSubmit(); } });
 function autosize(){ msg.style.height="auto"; msg.style.height=Math.min(msg.scrollHeight, 150)+"px"; }
 msg.addEventListener("input", ()=>{ autosize(); presence.listen(); });
-$("#taci").onclick = ()=>{ if (busy || (presence && presence.state==="speak")) return; stepSilence(5); presence.hush(); addLine("voice", "·  ·  ·", {cls:"blank", instant:true}); };
-$("#stanza").onclick = ()=>{ if (busy || (presence && presence.state==="speak")) return; rush = false; let ex = take(STANZE[vol]); if (!ex){ STANZE[vol].forEach(x=>used.delete(x)); used.add(lastEx); ex = take(STANZE[vol]) || STANZE[vol][0]; } lastEx = ex; addLine("voice", ex, {share:true}); stepSilence(); msg.focus(); };
+$("#taci").onclick = ()=>{ stopIntro(); if (busy || (presence && presence.state==="speak")) return; stepSilence(5); presence.hush(); addLine("voice", "·  ·  ·", {cls:"blank", instant:true}); };
+$("#stanza").onclick = ()=>{ stopIntro(); if (busy || (presence && presence.state==="speak")) return; rush = false; let ex = take(STANZE[vol]); if (!ex){ STANZE[vol].forEach(x=>used.delete(x)); used.add(lastEx); ex = take(STANZE[vol]) || STANZE[vol][0]; } lastEx = ex; addLine("voice", ex, {share:true}); stepSilence(); msg.focus(); };
 
 /* --- la presentazione --- */
 const INTRO = ["Ciao, sono la Stanza.\nNon sono Antonio: sono una voce fatta con le frasi dei suoi libri.",
                "Parlo poco e faccio qualche domanda.\nOgni tanto non rispondo: serve a lasciarti spazio."];
+let introOn = false;
+function stopIntro(){   // chi scrive (o tace) durante la presentazione ha la precedenza: la presentazione si chiude
+  if (!introOn) return; introOn = false; typeGen++; rush = false; VOICE.stop();
+  log.querySelectorAll(".choices").forEach(x=>x.remove()); store.set("presentato", true);
+}
 async function presentati(){
-  typeGen++; convGen++; const my = typeGen; rush = false;
+  typeGen++; convGen++; const my = typeGen; rush = false; introOn = true;
   log.replaceChildren(); presence.birth(); presence.set("idle"); VOICE.stop();
   if (!VOICE.unlocked && VOICE.ok){
     await new Promise(go=>{
@@ -1255,7 +1273,7 @@ async function presentati(){
     el("button",{type:"button",class:"btn ghost",onclick:()=>{ gameStart="gioco2"; goRoom("giochi"); }},"Gioca: il bicchiere"),
     el("button",{type:"button",class:"btn ghost",onclick:()=>{ ch.remove(); addLine("voice", VOLUMI[vol].apertura, {share:true}); msg.focus(); }},"Parlami"),
     el("div",{class:"tools",style:"width:100%"}, el("button",{type:"button",class:"link","data-sheet":"ce_lho"},"Ho già il libro"), el("button",{type:"button",class:"link",onclick:openInfo},"Cos'è la Stanza"), ...(IS_HOME_APP?[]:[el("button",{type:"button",class:"link",onclick:openHomeSheet},"Mettila nella Home")])));
-  log.appendChild(ch); ch.scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block:"nearest"});
+  introOn = false; log.appendChild(ch); ch.scrollIntoView({behavior: REDUCED ? "auto" : "smooth", block:"nearest"});
   store.set("presentato", true);
 }
 log.addEventListener("click", e=>{ if (!e.target.closest("button,a")){ rush = true; VOICE.stop(); } });
@@ -1335,7 +1353,7 @@ function renderOggi(){
       el("p",{class:"sub"},"Non devi rispondere a chi te l'ha mandata. Basta rispondere a te."),
       el("div",{class:"acts"},
         el("button",{type:"button",class:"btn primary",onclick:()=>{ goRoom("stanza"); openVolume(vol, pq); msg.focus(); }},"Rispondi nella Stanza"),
-        el("button",{type:"button",class:"btn ghost",onclick:()=>copyText(pq + "\n" + PAGE_URL + "#q" + passed, box)},"Passala a qualcun altro"),
+        el("button",{type:"button",class:"btn ghost",onclick:()=>shareLink(pq + "\n" + PAGE_URL + "#q" + passed, box)},"Passala a qualcun altro"),
         el("button",{type:"button",class:"btn ghost",onclick:()=>{ passed=null; renderOggi(); }},"La domanda di oggi")));
     return;
   }
@@ -1361,8 +1379,9 @@ function renderOggi(){
                      : {format:"story", eyebrow:"La domanda di oggi", main:q, sub:"Rispondi nella tua testa. Poi taci.", meter:fmt(perc)}, "il-vuoto-oggi"); }},"Storia"),
       el("button",{type:"button",class:"btn ghost",onclick:()=>{ goRoom("stanza"); openVolume(vol, q); msg.value = note.value; autosize(); msg.focus(); }},"Parlane")),
     el("div",{class:"tools"},
-      el("button",{type:"button",class:"link",onclick:()=>{ const full=Math.round(perc/10); copyText(`IL VUOTO · ${dateTxt}\n${fmt(perc)}\n${"▓".repeat(full)}${"░".repeat(10-full)}\nHo risposto. Non ti dico cosa.\n${PAGE_URL}#oggi\n#ilvuoto`, box); }},"Copia il tuo giorno (senza la risposta)"),
-      el("button",{type:"button",class:"link",onclick:()=>copyText(q + "\n" + PAGE_URL + "#q" + qi, box)},"Passa questa domanda")),
+      el("button",{type:"button",class:"link",onclick:()=>{ const full=Math.round(perc/10); shareLink(`IL VUOTO · ${dateTxt}\n${fmt(perc)}\n${"▓".repeat(full)}${"░".repeat(10-full)}\nHo risposto. Non ti dico cosa.\n${PAGE_URL}#oggi\n#ilvuoto`, box); }},"Copia il tuo giorno (senza la risposta)"),
+      el("button",{type:"button",class:"link",onclick:()=>shareLink(q + "\n" + PAGE_URL + "#q" + qi, box)},"Passa questa domanda"),
+      ...(window.claude ? [] : [el("button",{type:"button",class:"link",onclick:remindIcs},"Ricordamela ogni sera")])),
     ...(st.last===di && !IS_HOME_APP ? [el("div",{class:"sell"}, el("p",{class:"sub"},"La domanda cambia a mezzanotte. Per ritrovarla domani con un tocco, mettila nella schermata Home."), el("div",{class:"tools"}, el("button",{type:"button",class:"link",onclick:openHomeSheet},"Mettila nella Home")))] : []),
     el("div",{class:"daycount"},
       el("div",{}, el("b",{}, String(st.last===di||st.last===di-1 ? st.run : 0)), el("small",{},"giorni di fila")),
@@ -1402,7 +1421,7 @@ function renderCancella(){
   function done(word){
     acts.append(
       el("button",{type:"button",class:"btn primary",onclick:()=>saveCard({format:"story", eyebrow:"Ho scritto una frase. È rimasta una parola.", title:word, sub:"Il resto l'ho tolto.", meter:"Silenzio: 99,33%"}, "il-vuoto-parola")},"Salva la storia"),
-      el("button",{type:"button",class:"btn ghost",onclick:()=>copyText(`Ho scritto la cosa che non dico mai. È rimasta una parola: ${word}.\n${PAGE_URL}#cancella\n#ilvuoto`, box)},"Copia"),
+      el("button",{type:"button",class:"btn ghost",onclick:()=>shareLink(`Ho scritto la cosa che non dico mai. È rimasta una parola: ${word}.\n${PAGE_URL}#cancella\n#ilvuoto`, box)},SHARE_LBL),
       el("button",{type:"button",class:"btn ghost",onclick:renderCancella},"Ancora"));
   }
   box.append(
@@ -1418,13 +1437,13 @@ function renderPassa(){
   const box = $("#passa"); box.replaceChildren();
   const list = el("div",{class:"pass"});
   for (const m of (COPY.messaggio_passa||[])){
-    const item = el("div",{class:"pass-item"}, el("p",{},m), el("button",{type:"button",class:"link",onclick:()=>copyText(m + "\n" + PAGE_URL, item)},"Copia"));
+    const item = el("div",{class:"pass-item"}, el("p",{},m), el("button",{type:"button",class:"link",onclick:()=>shareLink(m + "\n" + PAGE_URL, item)},SHARE_LBL));
     list.append(item);
   }
   box.append(
     el("div",{class:"eyebrow"},"Passare le consegne"),
     el("h2",{class:"huge"},"Non tenerla per te."),
-    el("p",{class:"big"},"Il terzo volume si scriverà in due e si regalerà. Questa stanza si può già passare. Scegli una frase, copiala, mandala a una persona sola."),
+    el("p",{class:"big"},"Il terzo volume si scriverà in due e si regalerà. Questa stanza si può già passare. Scegli una frase " + (CAN_SHARE ? "e mandala" : ", copiala e mandala") + " a una persona sola."),
     list,
     el("div",{}, el("div",{class:"eyebrow"},"Il link"), el("p",{class:"url"},PAGE_URL)),
     ...(typeof noSell!=="undefined" && noSell ? [] : [el("div",{class:"acts"}, el("button",{type:"button",class:"btn ghost","data-sheet":"regalo"},"Regala il Volume I"))])
@@ -2130,8 +2149,35 @@ function renderGiochi(box, api, startId) {
 }
 
 
+/* ====================== PROMEMORIA (calendario del telefono, gratis, nessun server) ====================== */
+function remindIcs(){
+  const d = new Date(); d.setDate(d.getDate() + (d.getHours() >= 21 ? 1 : 0));
+  const p2 = n => String(n).padStart(2,"0"), day = `${d.getFullYear()}${p2(d.getMonth()+1)}${p2(d.getDate())}`;
+  const now = new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//IL VUOTO//La Stanza//IT","CALSCALE:GREGORIAN","BEGIN:VEVENT",
+    "UID:ilvuoto-oggi-" + Date.now() + "@antonioflamini.github.io","DTSTAMP:" + now,
+    "DTSTART:" + day + "T213000","DTEND:" + day + "T213500","RRULE:FREQ=DAILY",
+    "SUMMARY:La domanda di oggi · IL VUOTO","DESCRIPTION:Una domanda al giorno\\, uguale per tutti. " + PAGE_URL + "#oggi","URL:" + PAGE_URL + "#oggi",
+    "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:La domanda di oggi","TRIGGER:PT0M","END:VALARM","END:VEVENT","END:VCALENDAR"].join("\r\n");
+  try { const a = el("a",{href: URL.createObjectURL(new Blob([ics],{type:"text/calendar"})), download:"il-vuoto-ogni-sera.ics"}); document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 3000);
+    toast("Aprilo e aggiungilo al calendario: ogni sera alle 21:30."); }
+  catch(e){ toast("Il promemoria non si può creare da qui."); }
+}
+
+/* ====================== INSTALLA L'APP ====================== */
+let installEvt = null;
+function renderAppBtn(){ const b = $("#app-open"); if (b) b.hidden = IS_HOME_APP || !!window.claude || !(installEvt || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent||"")); }
+addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); installEvt = e; renderAppBtn(); });
+addEventListener("appinstalled", ()=>{ installEvt = null; renderAppBtn(); if (!$("#sheet").hidden) closeSheet(); toast("Fatto: la Stanza è tra le tue app."); });
+async function installApp(){
+  if (installEvt){ const ev = installEvt; installEvt = null; try { await ev.prompt(); await ev.userChoice; } catch(e){} renderAppBtn(); return true; }
+  return false;
+}
+if ("serviceWorker" in navigator && !window.claude && /^https?:$/.test(location.protocol)) addEventListener("load", ()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+
 /* ====================== METTILA NELLA HOME ====================== */
-function openHomeSheet(){
+async function openHomeSheet(){
+  if (await installApp()) return;
   const ua = navigator.userAgent || "";
   const inApp = /Instagram|FBAN|FBAV|FB_IAB|TikTok|musical_ly|Bytedance|Line\//i.test(ua);
   const ios = /iPhone|iPad|iPod/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
@@ -2144,8 +2190,9 @@ function openHomeSheet(){
   if (!ios && !android && !/Mobi/i.test(ua)) passi.push("Sul computer: premi Ctrl+D (su Mac Cmd+D) per salvarla tra i preferiti. Sul telefono, apri lo stesso link e usa \"Aggiungi alla schermata Home\".");
   box.append(
     el("div",{class:"row"}, el("span",{class:"eyebrow"},"Ogni giorno, con un tocco"), el("button",{type:"button",class:"btn ghost",onclick:closeSheet},"Chiudi")),
-    el("h2",{class:"huge",id:"sheet-title"},"Mettila nella Home."),
-    el("p",{class:"big"},"Così la Stanza sta tra le tue app. La domanda di Oggi cambia ogni notte, e i giorni di fila contano solo se torni."),
+    el("h2",{class:"huge",id:"sheet-title"},"Installa la Stanza."),
+    el("p",{class:"big"},"Due tocchi e sta tra le tue app, con la sua icona. La domanda di Oggi cambia ogni notte, e i giorni di fila contano solo se torni."),
+    el("ul",{class:"perks"}, el("li",{},"gratis"), el("li",{},"niente store"), el("li",{},"niente account"), el("li",{},"funziona senza rete"), el("li",{},"nessun dato raccolto")),
     el("ol",{class:"sell-steps"}, ...passi.map(p=>el("li",{},p))),
     el("p",{class:"sub"},"Oppure salvati il link:"),
     el("p",{class:"url"}, PAGE_URL),
@@ -2159,7 +2206,12 @@ let infoReturn = null;
 function openInfo(){ infoReturn = document.activeElement; const d=$("#info"); d.hidden=false; d.scrollTop=0; $("#info-close").focus(); VOICE.stop(); }
 function closeInfo(){ $("#info").hidden=true; if (presence) presence.wake(); if (infoReturn && infoReturn.focus) infoReturn.focus(); }
 $("#info-open").onclick = openInfo;
-$("#home-open").onclick = openHomeSheet; if (IS_HOME_APP) $("#home-open").hidden = true; $("#info-open2").onclick = openInfo;
+$("#home-open").onclick = openHomeSheet; $("#app-open").onclick = openHomeSheet; renderAppBtn(); if (IS_HOME_APP) $("#home-open").hidden = true;
+if (!window.claude){   // sul sito: nessuna IA, nessun invio di testo; i testi lo dicono chiaramente
+  const f = document.querySelector("footer > span");
+  if (f) f.textContent = "Questa voce è un programma ispirato ai libri di Antonio Flamini: risponde con frasi scritte prima, prese dai suoi libri. Non è l'autore e non è un terapeuta. Niente account, niente pubblicità, nessun dato raccolto: quello che scrivi non lascia il tuo telefono.";
+  document.querySelectorAll(".info-list dt").forEach(dt=>{ if (/Due modi/.test(dt.textContent)){ dt.textContent = "Privacy"; dt.nextElementSibling.textContent = "Le risposte sono frasi scritte prima: quello che scrivi resta nella pagina e non viene mandato a nessuno."; } });
+} $("#info-open2").onclick = openInfo;
 $("#info-close").onclick = closeInfo;
 $("#info-go").onclick = ()=>{ closeInfo(); goRoom("stanza"); msg.focus(); };
 addEventListener("keydown", e=>{ if (e.key==="Escape" && !$("#info").hidden) closeInfo(); });
@@ -2185,11 +2237,13 @@ function goRoom(r){
     if (!giochiH || gameStart) { $("#giochi").replaceChildren(); giochiH = renderGiochi($("#giochi"), giochiApi(), gameStart || undefined); gameStart = null; }
     else if (giochiH.list) giochiH.list();
   }
+  try { const tb = $("#tab-"+r), nr = tb.parentElement, x = tb.offsetLeft - nr.offsetLeft; if (x + tb.offsetWidth > nr.scrollLeft + nr.clientWidth || x < nr.scrollLeft) nr.scrollTo({left: x - 16, behavior: REDUCED ? "auto" : "smooth"}); } catch(e){}
   counterEl.closest("form").hidden = r !== "stanza";
   if (r !== "stanza") VOICE.stop();
   store.set("room", r);
 }
 document.querySelectorAll(".room-tab").forEach(b=>b.onclick=()=>goRoom(b.dataset.room));
+{ const nr = $("nav.rooms"), upd = ()=>nr.classList.toggle("end", nr.scrollLeft + nr.clientWidth >= nr.scrollWidth - 4); nr.addEventListener("scroll", upd, {passive:true}); addEventListener("resize", upd); upd(); }
 $("nav.rooms").addEventListener("keydown", e=>{
   if (!["ArrowRight","ArrowLeft","Home","End"].includes(e.key)) return;
   const tabs=[...document.querySelectorAll(".room-tab")], i=tabs.indexOf(document.activeElement); if (i<0) return;
