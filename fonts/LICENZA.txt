@@ -1,0 +1,2 @@
+Jost (Indestructible Type*) e IBM Plex Mono (IBM) sono distribuiti con licenza SIL Open Font License 1.1:
+https://openfontlicense.org — https://github.com/indestructible-type/Jost — https://github.com/IBM/plex
