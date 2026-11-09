@@ -22,6 +22,7 @@ for line in head.split("\n"):
 head = "\n".join(keep)
 head = head.replace("<title>", '<meta name="claude:viewport-fit-sides" content="cover">\n<title>', 1)
 body = re.sub(r'\s*<a class="buy" href="en/"[^>]*>English</a>', "", body)
+head, body = re.sub(r'\?v=[\w.-]+"', '"', head), re.sub(r'\?v=[\w.-]+"', '"', body)   # su claude.ai i file sono già versionati
 
 os.makedirs(OUT, exist_ok=True)
 open(os.path.join(OUT, "index.html"), "w", encoding="utf-8", newline="").write(head + body)

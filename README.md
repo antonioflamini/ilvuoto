@@ -10,6 +10,7 @@ Sito: https://antonioflamini.github.io/ilvuoto/ — English: https://antonioflam
 - `index.html` — la struttura della pagina
 - `stile.css` — l'aspetto; `fonts/` — Jost e IBM Plex Mono (licenza OFL)
 - `sw.js` — funzionamento offline. **Se lo modifichi, alza il numero della cache** (`ilvuoto-vN`)
+- Dopo ogni modifica a `stile.css`, `testi.js` o `app.js` cambia il `?v=` in `index.html` e `en/index.html`, così i browser scaricano i file nuovi
 - `en/` — versione inglese (copia tradotta di `testi.js`, `app.js`, `index.html`: le modifiche vanno riportate anche lì)
 - `og.jpg` — anteprima dei link; `libro.jpg` — foto del Volume I
 - `manifest.webmanifest`, `icon-*.png`, `apple-touch-icon.png`, `icon.svg` — installazione come app

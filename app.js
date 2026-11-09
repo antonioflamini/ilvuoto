@@ -341,8 +341,10 @@ const CRISI_SEGUITO = ["Sono ancora qui. Ma una persona vera conta più di quest
   "Non devi spiegarmi niente. Se puoi, chiama adesso qualcuno di cui ti fidi, o Telefono Amico Italia allo 02 2327 2327. In emergenza, il 112."];
 const GENERIC_Q = ["Resta lì un momento. Cosa c'è sotto?","E adesso, cosa resta?","Puoi dirlo con meno parole?","Di chi è questa frase, davvero?","Cosa toglieresti, per primo?","Se lo dicessi ad alta voce, come suonerebbe?","Chi te l'ha insegnato?","E se non ci fosse niente da fare?","Che cosa c'era prima di questo pensiero?","Da quanto tempo lo porti con te?"];
 const CONTINUA = ["Capito.","Ti seguo.","Va bene così.","Ok, restiamo qui un momento.","Non c'è fretta."];
-const CHIUSURA = ["Ci siamo girati intorno abbastanza. Se vuoi, premi Stanza: ti do un piccolo esercizio da fare su carta. Oppure prova il Test del Silenzio.",
-                  "Forse per oggi basta così. Puoi premere Taci e lasciare spazio, oppure raccontarmi un'altra cosa."];
+const CHIUSURA = ["Restiamo qui quanto vuoi. C'è dell'altro, oggi, oltre a questo?",
+                  "Possiamo andare avanti. Se ti va, cambia argomento: cosa ti passa per la testa adesso?",
+                  "Ci siamo girati intorno un po'. Prova a dirlo da un altro lato: cosa ti pesa di più, in tutto questo?",
+                  "Ti ascolto ancora. E se vuoi una pausa, premi Stanza: ti do un piccolo esercizio da fare su carta."];
 function freeOf(arr){ return (arr||[]).filter(x=>!used.has(x)); }
 function take(arr, ordered){ const f = freeOf(arr); if (!f.length) return ""; const x = ordered ? f[0] : pick(f); used.add(x); return x; }
 function fragmentReply(text){
@@ -396,13 +398,14 @@ function buildRules(){
 async function liveReply(text){
   ctl = new AbortController();
   const input = [{role:"user", content: buildRules()}, ...turns.slice(-10), {role:"user", content:text}];
-  const {text: out} = await sample(input, { modelTier:"quick", cache:false, signal:ctl.signal,
-    });
-  return out.trim();
+  const timer = setTimeout(()=>{ try { ctl.abort(); } catch(e){} }, 25000);
+  try { const {text: out} = await sample(input, { modelTier:"quick", cache:false, signal:ctl.signal });
+    return String(out || "").trim(); }
+  finally { clearTimeout(timer); }
 }
 function setMode(){ stateEl.innerHTML = VOLUMI[vol].stato + (liveOK ? " · voce viva" : " · voce a frammenti"); }
 async function respond(text){
-  if (busy) return; stopIntro(); busy = true; setBusy(true); const gen = convGen;
+  if (busy) return; stopIntro(); typeGen++; VOICE.stop(); busy = true; setBusy(true); const gen = convGen;
   try {
     rush = false; addLine("you", text); document.querySelector(".presence").classList.add("compact");
     if (isCrisi(text)){ noSell = true; lastTema = "__crisi"; depth = 0; await addLine("voice", CRISI_TESTO, {cls:"alert", instant:true}).done; VOICE.say(CRISI_TESTO.replace("02 2327 2327","zero due, ventitré ventisette, ventitré ventisette")); return; }
@@ -420,9 +423,10 @@ async function respond(text){
     if (gen !== convGen) return;                       // nel frattempo è cambiato volume: questa risposta non appartiene più a nessuno
     if (!answer){ await sleep(700 + Math.random()*900); if (gen !== convGen) return; answer = fragmentReply(text); }   // il Ma: una pausa prima di rispondere
     turns.push({role:"user",content:text},{role:"assistant",content:answer});
-    const line = addLine("voice", answer, {share:true}); await line.done;
-    if (gen !== convGen) return;
-    const row = typeof sellRowFor==="function" ? sellRowFor(text, lastTema) : null; if (row){ const sr = el("div",{class:"tools sell-row"}, row); line.d.append(sr); sr.scrollIntoView({block:"nearest"}); }
+    const line = addLine("voice", answer, {share:true}), temaNow = lastTema;
+    busy = false; setBusy(false);                      // si può già scrivere mentre la Stanza legge: niente attese
+    line.done.then(()=>{ if (gen !== convGen || !line.d.isConnected) return;
+      const row = typeof sellRowFor==="function" ? sellRowFor(text, temaNow) : null; if (row){ const sr = el("div",{class:"tools sell-row"}, row); line.d.append(sr); sr.scrollIntoView({block:"nearest"}); } });
   } catch(e){ console.error(e); }
   finally { busy = false; setBusy(false); if (presence && presence.state==="think") presence.set("idle"); }
 }
@@ -439,8 +443,8 @@ $("#ask").addEventListener("submit", e=>{ e.preventDefault(); if (busy){ toast("
 msg.addEventListener("keydown", e=>{ if(e.key==="Enter" && !e.shiftKey){ e.preventDefault(); $("#ask").requestSubmit(); } });
 function autosize(){ msg.style.height="auto"; msg.style.height=Math.min(msg.scrollHeight, 150)+"px"; }
 msg.addEventListener("input", ()=>{ autosize(); presence.listen(); });
-$("#taci").onclick = ()=>{ stopIntro(); if (busy || (presence && presence.state==="speak")) return; stepSilence(5); presence.hush(); addLine("voice", "·  ·  ·", {cls:"blank", instant:true}); };
-$("#stanza").onclick = ()=>{ stopIntro(); if (busy || (presence && presence.state==="speak")) return; rush = false; let ex = take(STANZE[vol]); if (!ex){ STANZE[vol].forEach(x=>used.delete(x)); used.add(lastEx); ex = take(STANZE[vol]) || STANZE[vol][0]; } lastEx = ex; addLine("voice", ex, {share:true}); stepSilence(); msg.focus(); };
+$("#taci").onclick = ()=>{ stopIntro(); if (busy) return; typeGen++; VOICE.stop(); stepSilence(5); presence.hush(); addLine("voice", "·  ·  ·", {cls:"blank", instant:true}); };
+$("#stanza").onclick = ()=>{ stopIntro(); if (busy) return; typeGen++; VOICE.stop(); rush = false; let ex = take(STANZE[vol]); if (!ex){ STANZE[vol].forEach(x=>used.delete(x)); used.add(lastEx); ex = take(STANZE[vol]) || STANZE[vol][0]; } lastEx = ex; addLine("voice", ex, {share:true}); stepSilence(); msg.focus(); };
 
 /* --- la presentazione --- */
 const INTRO = ["Ciao, sono la Stanza.\nNon sono Antonio: sono una voce fatta con le frasi dei suoi libri.",
